@@ -63,6 +63,7 @@ class PannableRatingBar extends StatelessWidget {
     this.textDirection,
     this.verticalDirection = VerticalDirection.down,
     this.clipBehavior = Clip.none,
+    this.enablePixelsCompensation = true,
   })  : _useItemBuilder = false,
         _items = items,
         _itemCount = items.length,
@@ -88,6 +89,7 @@ class PannableRatingBar extends StatelessWidget {
     this.textDirection,
     this.verticalDirection = VerticalDirection.down,
     this.clipBehavior = Clip.none,
+    this.enablePixelsCompensation = true,
   })  : _useItemBuilder = true,
         _items = null,
         _itemCount = itemCount,
@@ -103,6 +105,11 @@ class PannableRatingBar extends StatelessWidget {
   /// Note that this itself only reporting the next value, to actually change
   /// the visual of this widget, please rebuild with new [rate] value.
   final ValueChanged<double>? onChanged;
+
+  /// See this issue: https://github.com/flutter/flutter/issues/98464
+  /// So until they fixed it, all child widget will have a margin of 1px when
+  /// this flag is true.
+  final bool enablePixelsCompensation;
 
   // wrap properties, please do see the document of the Flutter [Wrap] widget
   // to learn more about these.
@@ -142,13 +149,20 @@ class PannableRatingBar extends StatelessWidget {
       } else {
         config = _items![i];
       }
+      Widget child = config.child;
+      if (enablePixelsCompensation) {
+        child = Container(
+          margin: const EdgeInsets.all(1),
+          child: child,
+        );
+      }
       children.add(_RateItem(
         key: ValueKey<int>(i),
         percent: calcPercent(i, rate),
         selectedColor: config.selectedColor,
         unSelectedColor: config.unSelectedColor,
         axis: direction,
-        child: config.child,
+        child: child,
       ));
     }
     return _PannableWrap(

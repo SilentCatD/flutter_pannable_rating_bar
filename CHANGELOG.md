@@ -1,3 +1,8 @@
+## 2.0.1
+
+* add params for pixels compensation, see this
+  issue: https://github.com/flutter/flutter/issues/98464
+
 ## 2.0.0
 
 * BREAKING CHANGES!
