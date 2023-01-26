@@ -11,6 +11,8 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
+[![pub package](https://img.shields.io/pub/v/flutter_pannable_rating_bar?color=green&include_prereleases&style=plastic)](https://pub.dev/packages/flutter_pannable_rating_bar)
+
 Yet another rating bar for Flutter. But this time supported any value, not just full or half.
 Tap and drag gestures are all supported.
 
@@ -35,6 +37,8 @@ provided and use it as the value for PannableRatingBar.
 
 Just setState with the value provided in onChanged call back, and it will be correctly distributed
 for each rate widget respectively.
+
+<img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/5_star.gif?raw=true" width="200px">
 
 ```dart
 @override
@@ -64,6 +68,8 @@ Widget build(BuildContext context) {
 ```
 
 Use your own widget as the rating widget.
+
+<img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/house.gif?raw=true" width="200px">
 
 ```dart
 
@@ -102,6 +108,8 @@ Widget build(BuildContext context) {
 ```
 
 This widget itself use Wrap to layout, hence support any layout that can be achieved with Wrap.
+
+<img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/20_star.gif?raw=true" width="200px">
 
 ```dart
 @override
