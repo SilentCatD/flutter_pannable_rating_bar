@@ -1,8 +1,8 @@
 name: flutter_pannable_rating_bar
 description: "Yet another rating bar for Flutter. But this time supported any value, not just full or half. Tap and drag gestures are all supported."
 version: 0.0.1
-homepage:
-issue_tracker:
+homepage: https://github.com/SilentCatD/flutter_pannable_rating_bar
+issue_tracker: https://github.com/SilentCatD/flutter_pannable_rating_bar/issues
 
 environment:
   sdk: '>=2.13.0 <3.0.0'
