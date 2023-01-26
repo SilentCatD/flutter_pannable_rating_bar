@@ -2,70 +2,107 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-/// Default rating widget widget for [PannableRatingBar.rateItem]
-Widget defaultRateItem(BuildContext context) {
-  return const Icon(
-    Icons.star,
-    size: 48,
-    color: Colors.grey,
-  );
+/// Configuration for widget used as a rate widget.
+class RatingWidget {
+  const RatingWidget(
+      {required this.child,
+      this.selectedColor = Colors.yellow,
+      this.unSelectedColor = Colors.transparent});
+
+  /// The widget to be used as a rate widget, [selectedColor] and
+  /// [unSelectedColor] will be draw on this. The widget can be of any size,
+  /// shape, type,... and different [RatingWidget] do NOT have to be similar
+  /// in any of the above aspect.
+  final Widget child;
+
+  /// Color that will be draw on [child] to indicate the portion of current
+  /// selection, default to [Colors.yellow].
+  final Color selectedColor;
+
+  /// Color that will be draw on [child], but bellow [selectedColor] to indicate
+  /// the not-selected portion, default to [Colors.transparent]
+  final Color unSelectedColor;
 }
 
+/// Signature for function that return a [RatingWidget], used in
+/// [PannableRatingBar.builder]
+typedef IndexedRatingWidgetBuilder = RatingWidget Function(BuildContext, int);
+
 /// A rating bar widget that support both tap and pan (drag) event, any value
-/// [double] go in [PannableRatingBar.rate] is supported, it's NOT limited
-/// to half or full only, the value will be correctly rendered in percentage
-/// of [PannableRatingBar.rateItem] each respectively.
+/// for [PannableRatingBar.rate] is supported, it's NOT limited
+/// to half or full only, the value will be correctly distributed to
+/// [RatingWidget.child] each respectively.
 ///
 /// Of course, the [PannableRatingBar.rate] must be within reasonable range (
-/// no more than [PannableRatingBar.itemCount])
+/// no more than the current number of [RatingWidget])
 ///
 /// The widget itself is completely stateless and will report it's value through
 /// [PannableRatingBar.onChanged] callback. The reported value can be processed
 /// anyway one want.
 ///
-/// This widget support all property of the Flutter's [Wrap] widget. To see more
-/// information about them, refer to documentation of [Wrap].
+/// This widget support all property of the Flutter's [Wrap] widget, in fact,
+/// it use [Wrap] to laid out it's children, for more information about each
+/// of these property, refer to documentation of [Wrap].
 class PannableRatingBar extends StatelessWidget {
+  /// Create a [PannableRatingBar] widget, one must provide a list of
+  /// [RatingWidget] to be used as children. If many of the items is similar,
+  /// the use of [PannableRatingBar.builder] should be considered.
+  /// Items provided do not have to be the same, each can have different size,
+  /// shape,...
   const PannableRatingBar({
     Key? key,
-    required this.itemCount,
     required this.rate,
-    this.rateItem = defaultRateItem,
+    required List<RatingWidget> items,
     this.onChanged,
     this.direction = Axis.horizontal,
     this.alignment = WrapAlignment.center,
-    this.spacing = 20,
-    this.runAlignment = WrapAlignment.start,
-    this.runSpacing = 10,
+    this.spacing = 0,
+    this.runAlignment = WrapAlignment.center,
+    this.runSpacing = 0,
     this.crossAxisAlignment = WrapCrossAlignment.start,
     this.textDirection,
     this.verticalDirection = VerticalDirection.down,
     this.clipBehavior = Clip.none,
-    this.unSelectedColor,
-    this.selectedColor = Colors.yellow,
-  })  : assert(rate >= 0 && rate <= itemCount),
+  })  : _useItemBuilder = false,
+        _items = items,
+        _itemCount = items.length,
+        _itemBuilder = null,
+        assert(rate >= 0 && rate <= items.length),
         super(key: key);
 
-  /// Number of item of this widget.
-  final int itemCount;
+  /// Create the [PannableRatingBar] widget with builder function,
+  /// items returned from this function do not have to be the same, each can
+  /// have different size, shape,...
+  const PannableRatingBar.builder({
+    Key? key,
+    required this.rate,
+    required IndexedRatingWidgetBuilder itemBuilder,
+    required int itemCount,
+    this.onChanged,
+    this.direction = Axis.horizontal,
+    this.alignment = WrapAlignment.center,
+    this.spacing = 0,
+    this.runAlignment = WrapAlignment.start,
+    this.runSpacing = 0,
+    this.crossAxisAlignment = WrapCrossAlignment.start,
+    this.textDirection,
+    this.verticalDirection = VerticalDirection.down,
+    this.clipBehavior = Clip.none,
+  })  : _useItemBuilder = true,
+        _items = null,
+        _itemCount = itemCount,
+        _itemBuilder = itemBuilder,
+        assert(rate >= 0 && rate <= itemCount),
+        super(key: key);
 
   /// The current rating value of this widget, which will be correctly
-  /// distributed for all [rateItem].
+  /// distributed for all [RatingWidget] children.
   final double rate;
-
-  /// The widget to be used as rate widget, default to [defaultRateItem].
-  final WidgetBuilder rateItem;
 
   /// The callback each time there's new value of rate to be received.
   /// Note that this itself only reporting the next value, to actually change
   /// the visual of this widget, please rebuild with new [rate] value.
   final ValueChanged<double>? onChanged;
-
-  /// The color to be draw on top of [rateItem] when itself is selected.
-  final Color selectedColor;
-
-  /// The color to draw on top of all [rateItem], but bellow [selectedColor].
-  final Color? unSelectedColor;
 
   // wrap properties, please do see the document of the Flutter [Wrap] widget
   // to learn more about these.
@@ -79,7 +116,13 @@ class PannableRatingBar extends StatelessWidget {
   final VerticalDirection verticalDirection;
   final Clip clipBehavior;
 
-  double _calcPercent(int index, double rate) {
+  // private property used to store data needed of each constructor respectively
+  final bool _useItemBuilder;
+  final List<RatingWidget>? _items;
+  final IndexedRatingWidgetBuilder? _itemBuilder;
+  final int _itemCount;
+
+  double calcPercent(int index, double rate) {
     if (index < rate.floor()) {
       return 1;
     }
@@ -91,6 +134,23 @@ class PannableRatingBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<_RateItem> children = [];
+    for (var i = 0; i < _itemCount; i++) {
+      RatingWidget config;
+      if (_useItemBuilder) {
+        config = _itemBuilder!.call(context, i);
+      } else {
+        config = _items![i];
+      }
+      children.add(_RateItem(
+        key: ValueKey<int>(i),
+        percent: calcPercent(i, rate),
+        selectedColor: config.selectedColor,
+        unSelectedColor: config.unSelectedColor,
+        axis: direction,
+        child: config.child,
+      ));
+    }
     return _PannableWrap(
       direction: direction,
       alignment: alignment,
@@ -102,16 +162,7 @@ class PannableRatingBar extends StatelessWidget {
       verticalDirection: verticalDirection,
       clipBehavior: clipBehavior,
       onChanged: onChanged,
-      children: List.generate(
-        itemCount,
-        (index) => _RateItem(
-          axis: direction,
-          percent: _calcPercent(index, rate),
-          selectedColor: selectedColor,
-          unSelectedColor: unSelectedColor ?? Colors.transparent,
-          child: rateItem.call(context),
-        ),
-      ),
+      children: children,
     );
   }
 }
