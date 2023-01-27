@@ -464,8 +464,27 @@ class _RenderRateItem extends RenderProxyBox {
     }
   }
 
-  @override
-  bool get alwaysNeedsCompositing => true;
+  double? _percentHitTest({required Offset position}) {
+    if (size.contains(position)) {
+      double result;
+      switch (axis) {
+        case Axis.horizontal:
+          result = position.dx / size.width;
+          if (textDirection == TextDirection.rtl) {
+            result = 1 - result;
+          }
+          break;
+        case Axis.vertical:
+          result = position.dy / size.height;
+          if (verticalDirection == VerticalDirection.up) {
+            result = 1 - result;
+          }
+          break;
+      }
+      return result;
+    }
+    return null;
+  }
 
   void _paintBackground(PaintingContext context, Offset offset,
       PaintingContextCallback paintChild) {
@@ -513,27 +532,8 @@ class _RenderRateItem extends RenderProxyBox {
     context.pushLayer(_foregroundHandle.layer!, paintChild, offset);
   }
 
-  double? _percentHitTest({required Offset position}) {
-    if (size.contains(position)) {
-      double result;
-      switch (axis) {
-        case Axis.horizontal:
-          result = position.dx / size.width;
-          if (textDirection == TextDirection.rtl) {
-            result = 1 - result;
-          }
-          break;
-        case Axis.vertical:
-          result = position.dy / size.height;
-          if (verticalDirection == VerticalDirection.up) {
-            result = 1 - result;
-          }
-          break;
-      }
-      return result;
-    }
-    return null;
-  }
+  @override
+  bool get alwaysNeedsCompositing => true;
 
   @override
   void dispose() {
