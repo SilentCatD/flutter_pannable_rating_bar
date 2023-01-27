@@ -4,15 +4,16 @@ import 'package:flutter/rendering.dart';
 
 /// Configuration for widget used as a rate widget.
 class RatingWidget {
-  const RatingWidget(
-      {required this.child,
-      this.selectedColor = Colors.yellow,
-      this.unSelectedColor = Colors.transparent});
+  const RatingWidget({
+    this.selectedColor = Colors.yellow,
+    this.unSelectedColor,
+    required this.child,
+  });
 
   /// The widget to be used as a rate widget, [selectedColor] and
   /// [unSelectedColor] will be draw on this. The widget can be of any size,
   /// shape, type,... and different [RatingWidget] do NOT have to be similar
-  /// in any of the above aspect.
+  /// in any of the above aspects.
   final Widget child;
 
   /// Color that will be draw on [child] to indicate the portion of current
@@ -20,8 +21,9 @@ class RatingWidget {
   final Color selectedColor;
 
   /// Color that will be draw on [child], but bellow [selectedColor] to indicate
-  /// the not-selected portion, default to [Colors.transparent]
-  final Color unSelectedColor;
+  /// the not-selected portion. Set this value to null to skip the drawing of
+  /// background color filter layer, default to null.
+  final Color? unSelectedColor;
 }
 
 /// Signature for function that return a [RatingWidget], used in
@@ -33,9 +35,6 @@ typedef IndexedRatingWidgetBuilder = RatingWidget Function(BuildContext, int);
 /// to half or full only, the value will be correctly distributed to
 /// [RatingWidget.child] each respectively.
 ///
-/// Of course, the [PannableRatingBar.rate] must be within reasonable range (
-/// no more than the current number of [RatingWidget])
-///
 /// The widget itself is completely stateless and will report it's value through
 /// [PannableRatingBar.onChanged] callback. The reported value can be processed
 /// anyway one want.
@@ -43,6 +42,8 @@ typedef IndexedRatingWidgetBuilder = RatingWidget Function(BuildContext, int);
 /// This widget support all property of the Flutter's [Wrap] widget, in fact,
 /// it use [Wrap] to laid out it's children, for more information about each
 /// of these property, refer to documentation of [Wrap].
+/// This widget will also take [Wrap.textDirection] and [Wrap.verticalDirection]
+/// into consideration when perform drawing.
 class PannableRatingBar extends StatelessWidget {
   /// Create a [PannableRatingBar] widget, one must provide a list of
   /// [RatingWidget] to be used as children. If many of the items is similar,
@@ -68,7 +69,6 @@ class PannableRatingBar extends StatelessWidget {
         _items = items,
         _itemCount = items.length,
         _itemBuilder = null,
-        assert(rate >= 0 && rate <= items.length),
         super(key: key);
 
   /// Create the [PannableRatingBar] widget with builder function,
@@ -83,7 +83,7 @@ class PannableRatingBar extends StatelessWidget {
     this.direction = Axis.horizontal,
     this.alignment = WrapAlignment.center,
     this.spacing = 0,
-    this.runAlignment = WrapAlignment.start,
+    this.runAlignment = WrapAlignment.center,
     this.runSpacing = 0,
     this.crossAxisAlignment = WrapCrossAlignment.start,
     this.textDirection,
@@ -94,11 +94,10 @@ class PannableRatingBar extends StatelessWidget {
         _items = null,
         _itemCount = itemCount,
         _itemBuilder = itemBuilder,
-        assert(rate >= 0 && rate <= itemCount),
         super(key: key);
 
   /// The current rating value of this widget, which will be correctly
-  /// distributed for all [RatingWidget] children.
+  /// distributed for all [RatingWidget.child] children.
   final double rate;
 
   /// The callback each time there's new value of rate to be received.
@@ -111,7 +110,7 @@ class PannableRatingBar extends StatelessWidget {
   /// this flag is true.
   final bool enablePixelsCompensation;
 
-  // wrap properties, please do see the document of the Flutter [Wrap] widget
+  // [Wrap] properties, please do see the document of the Flutter [Wrap] widget
   // to learn more about these.
   final Axis direction;
   final WrapAlignment alignment;
@@ -136,7 +135,7 @@ class PannableRatingBar extends StatelessWidget {
     if (index >= rate) {
       return 0;
     }
-    return rate - rate.floor();
+    return (rate - rate.floor()).clamp(0, 1);
   }
 
   @override
@@ -162,6 +161,8 @@ class PannableRatingBar extends StatelessWidget {
         selectedColor: config.selectedColor,
         unSelectedColor: config.unSelectedColor,
         axis: direction,
+        textDirection: textDirection,
+        verticalDirection: verticalDirection,
         child: child,
       ));
     }
@@ -343,15 +344,19 @@ class _RateItem extends SingleChildRenderObjectWidget {
     required this.selectedColor,
     required this.unSelectedColor,
     required this.axis,
+    this.textDirection,
+    required this.verticalDirection,
   })  : assert(percent >= 0 && percent <= 1),
         super(
           key: key,
           child: child,
         );
   final Color selectedColor;
-  final Color unSelectedColor;
+  final Color? unSelectedColor;
   final double percent;
   final Axis axis;
+  final TextDirection? textDirection;
+  final VerticalDirection verticalDirection;
 
   @override
   RenderObject createRenderObject(BuildContext context) {
@@ -360,6 +365,8 @@ class _RateItem extends SingleChildRenderObjectWidget {
       unSelectedColor: unSelectedColor,
       percent: percent,
       axis: axis,
+      textDirection: textDirection ?? Directionality.maybeOf(context),
+      verticalDirection: verticalDirection,
     );
   }
 
@@ -370,20 +377,48 @@ class _RateItem extends SingleChildRenderObjectWidget {
       ..percent = percent
       ..selectedColor = selectedColor
       ..unSelectedColor = unSelectedColor
-      ..axis = axis;
+      ..axis = axis
+      ..verticalDirection = verticalDirection
+      ..textDirection = textDirection ?? Directionality.maybeOf(context);
   }
 }
 
 class _RenderRateItem extends RenderProxyBox {
   _RenderRateItem({
     required Color selectedColor,
-    required Color unSelectedColor,
+    required Color? unSelectedColor,
     required double percent,
     required Axis axis,
+    required TextDirection? textDirection,
+    required VerticalDirection verticalDirection,
   })  : _selectedColor = selectedColor,
         _unSelectedColor = unSelectedColor,
         _percent = percent,
-        _axis = axis;
+        _axis = axis,
+        _textDirection = textDirection,
+        _verticalDirection = verticalDirection;
+
+  VerticalDirection _verticalDirection;
+
+  VerticalDirection get verticalDirection => _verticalDirection;
+
+  set verticalDirection(VerticalDirection value) {
+    if (value != _verticalDirection) {
+      _verticalDirection = value;
+      markNeedsPaint();
+    }
+  }
+
+  TextDirection? _textDirection;
+
+  TextDirection? get textDirection => _textDirection;
+
+  set textDirection(TextDirection? value) {
+    if (value != _textDirection) {
+      _textDirection = value;
+      markNeedsPaint();
+    }
+  }
 
   Axis _axis;
 
@@ -407,11 +442,11 @@ class _RenderRateItem extends RenderProxyBox {
     }
   }
 
-  Color _unSelectedColor;
+  Color? _unSelectedColor;
 
-  Color get unSelectedColor => _unSelectedColor;
+  Color? get unSelectedColor => _unSelectedColor;
 
-  set unSelectedColor(Color value) {
+  set unSelectedColor(Color? value) {
     if (value != _unSelectedColor) {
       _unSelectedColor = value;
       markNeedsPaint();
@@ -430,45 +465,74 @@ class _RenderRateItem extends RenderProxyBox {
   }
 
   @override
-  ShaderMaskLayer? get layer => super.layer as ShaderMaskLayer?;
-
-  @override
   bool get alwaysNeedsCompositing => true;
 
-  void _paintChild(PaintingContext context, Offset offset) {
-    assert(child != null);
-    context.paintChild(child!, offset);
-  }
-
-  void paintBackground(PaintingContext context, Offset offset,
+  void _paintBackground(PaintingContext context, Offset offset,
       PaintingContextCallback paintChild) {
-    _backgroundHandle.layer ??= ShaderMaskLayer();
-    _backgroundHandle.layer!
-      ..shader = LinearGradient(
-              tileMode: TileMode.decal,
-              colors: [unSelectedColor, unSelectedColor])
-          .createShader(Offset.zero & size)
-      ..maskRect = offset & Size(size.width, size.height)
-      ..blendMode = BlendMode.srcATop;
+    assert(unSelectedColor != null);
+    _backgroundHandle.layer ??= ColorFilterLayer();
+    _backgroundHandle.layer!.colorFilter = ColorFilter.mode(
+      unSelectedColor!,
+      BlendMode.srcATop,
+    );
 
     context.pushLayer(_backgroundHandle.layer!, paintChild, offset);
   }
 
-  void paintForeground(PaintingContext context, Offset offset,
+  void _paintForeground(PaintingContext context, Offset offset,
       PaintingContextCallback paintChild) {
+    double width = 0.0;
+    double height = 0.0;
+    if (axis == Axis.horizontal) {
+      width = size.width * percent;
+      height = size.height;
+    } else {
+      width = size.width;
+      height = size.height * percent;
+    }
     final maskSize = Size(
-      size.width * (axis == Axis.horizontal ? percent : 1),
-      size.height * (axis == Axis.vertical ? percent : 1),
+      width,
+      height,
     );
+
+    Rect maskRect = offset & maskSize;
+    if (textDirection == TextDirection.rtl && axis == Axis.horizontal) {
+      maskRect = maskRect.shift(Offset(size.width - maskRect.width, 0));
+    } else if (verticalDirection == VerticalDirection.up &&
+        axis == Axis.vertical) {
+      maskRect = maskRect.shift(Offset(0, size.height - maskRect.height));
+    }
 
     _foregroundHandle.layer ??= ShaderMaskLayer();
     _foregroundHandle.layer!
       ..shader = LinearGradient(
               tileMode: TileMode.decal, colors: [selectedColor, selectedColor])
           .createShader(Offset.zero & maskSize)
-      ..maskRect = offset & maskSize
+      ..maskRect = maskRect
       ..blendMode = BlendMode.srcATop;
     context.pushLayer(_foregroundHandle.layer!, paintChild, offset);
+  }
+
+  double? _percentHitTest({required Offset position}) {
+    if (size.contains(position)) {
+      double result;
+      switch (axis) {
+        case Axis.horizontal:
+          result = position.dx / size.width;
+          if (textDirection == TextDirection.rtl) {
+            result = 1 - result;
+          }
+          break;
+        case Axis.vertical:
+          result = position.dy / size.height;
+          if (verticalDirection == VerticalDirection.up) {
+            result = 1 - result;
+          }
+          break;
+      }
+      return result;
+    }
+    return null;
   }
 
   @override
@@ -478,29 +542,22 @@ class _RenderRateItem extends RenderProxyBox {
     super.dispose();
   }
 
-  double _percentHitTest({required Offset position}) {
-    if (size.contains(position)) {
-      switch (axis) {
-        case Axis.horizontal:
-          return position.dx / size.width;
-        case Axis.vertical:
-          return position.dy / size.height;
-      }
-    }
-    return 0;
-  }
-
   @override
   void paint(PaintingContext context, Offset offset) {
     assert(child != null);
     assert(needsCompositing);
-    paintForeground(context, offset, (context, offset) {
-      paintBackground(context, offset, _paintChild);
-    });
+    if (unSelectedColor != null) {
+      _paintForeground(context, offset, (context, offset) {
+        _paintBackground(context, offset, super.paint);
+      });
+    } else {
+      _backgroundHandle.layer = null;
+      _paintForeground(context, offset, super.paint);
+    }
   }
 
-  final LayerHandle<ShaderMaskLayer> _backgroundHandle =
-      LayerHandle<ShaderMaskLayer>();
+  final LayerHandle<ColorFilterLayer> _backgroundHandle =
+      LayerHandle<ColorFilterLayer>();
   final LayerHandle<ShaderMaskLayer> _foregroundHandle =
       LayerHandle<ShaderMaskLayer>();
 }

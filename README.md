@@ -13,17 +13,16 @@ and the Flutter guide for
 
 [![pub package](https://img.shields.io/pub/v/flutter_pannable_rating_bar?color=green&include_prereleases&style=plastic)](https://pub.dev/packages/flutter_pannable_rating_bar)
 
-Yet another rating bar for Flutter. But this time supported any value, not just full or half, fully
-customizable as well. Tap and drag gestures are all supported.
-
 ## Features
 
 * Support any fraction value
-* Make use of Flutters Wrap widget, that mean you can achieve any layout that Wrap supported.
 * Customizable rating widget, the degree of customizable is really high, each widget don't have to
-  be the same size, don't even have to use the same indication color.
+be the same size, don't even have to use the same indication color.
 * Hit test correctly, render object of each child widget is used for hitTest, so the hitTest result
-  is as correct as it can be.
+is as correct as it can be.
+* Make use of Flutters Wrap widget, that mean you can achieve any layout that Wrap supported,
+properties textDirection and verticalDirection of Wrap will also be taken into consideration when
+painting the indicator.
 
 ## Getting started
 
@@ -44,40 +43,27 @@ for each rate widget respectively.
 <img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/basics.gif?raw=true" width="200px">
 
 ```dart
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(),
-    body: Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: PannableRatingBar(
-          rate: value,
-          alignment: WrapAlignment.center,
-          spacing: 20,
-          items: List.generate(
-              5,
-                  (index) =>
-              const RatingWidget(
-                selectedColor: Colors.yellow,
-                unSelectedColor: Colors.grey,
-                child: Icon(
-                  Icons.star,
-                  size: 48,
-                ),
-              )),
-          runAlignment: WrapAlignment.center,
-          onChanged: (value) {
-            setState(() {
-              this.value = value;
-            });
-          },
-        ),
+double rating = 0.0;
+
+PannableRatingBar(
+  rate: rating,
+  items: List.generate(5, (index) =>
+    const RatingWidget(
+      selectedColor: Colors.yellow,
+      unSelectedColor: Colors.grey,
+      child: Icon(
+        Icons.star,
+        size: 48,
       ),
-    ),
-  );
-}
+    )),
+  onChanged: (value) {
+    setState(() {
+      rating = value;
+    });
+  },
+)
 ```
+
 
 Use your own widget as the rating widget. They don't have to be the same size, color, or anything,
 fully customizable.
@@ -85,113 +71,92 @@ fully customizable.
 <img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/crazy.gif?raw=true" width="200px">
 
 ```dart
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(),
-    body: Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: PannableRatingBar(
-          rate: value,
-          alignment: WrapAlignment.center,
-          spacing: 20,
-          items: const [
-            RatingWidget(
-              selectedColor: Colors.yellow,
-              unSelectedColor: Colors.grey,
-              child: Icon(
-                Icons.star,
-                size: 48,
-              ),
-            ),
-            RatingWidget(
-              selectedColor: Colors.blue,
-              unSelectedColor: Colors.red,
-              child: Icon(
-                Icons.ac_unit,
-                size: 48,
-              ),
-            ),
-            RatingWidget(
-              selectedColor: Colors.purple,
-              unSelectedColor: Colors.amber,
-              child: Icon(
-                Icons.access_time_filled,
-                size: 48,
-              ),
-            ),
-            RatingWidget(
-              selectedColor: Colors.cyanAccent,
-              unSelectedColor: Colors.grey,
-              child: Icon(
-                Icons.abc,
-                size: 48,
-              ),
-            ),
-            RatingWidget(
-              selectedColor: Colors.tealAccent,
-              unSelectedColor: Colors.purple,
-              child: Icon(
-                Icons.accessibility_new_sharp,
-                size: 48,
-              ),
-            ),
-          ],
-          runAlignment: WrapAlignment.center,
-          onChanged: (value) {
-            setState(() {
-              this.value = value;
-            });
-          },
-        ),
+double rating = 0.0;
+
+PannableRatingBar(
+  rate: rating,
+  onChanged: (value) {
+    setState(() {
+      rating = value;
+    });
+  },
+  items: const [
+    RatingWidget(
+      selectedColor: Colors.yellow,
+      unSelectedColor: Colors.grey,
+      child: Icon(
+        Icons.star,
+        size: 48,
       ),
     ),
-  );
-}
+    RatingWidget(
+      selectedColor: Colors.blue,
+      unSelectedColor: Colors.red,
+      child: Icon(
+        Icons.ac_unit,
+        size: 48,
+      ),
+    ),
+    RatingWidget(
+      selectedColor: Colors.purple,
+      unSelectedColor: Colors.amber,
+      child: Icon(
+        Icons.access_time_filled,
+        size: 48,
+      ),
+    ),
+    RatingWidget(
+      selectedColor: Colors.cyanAccent,
+      unSelectedColor: Colors.grey,
+      child: Icon(
+        Icons.abc,
+        size: 48,
+      ),
+    ),
+    RatingWidget(
+      selectedColor: Colors.tealAccent,
+      unSelectedColor: Colors.purple,
+      child: Icon(
+        Icons.accessibility_new_sharp,
+        size: 48,
+      ),
+    ),
+  ],
+)
 ```
 
 The layout algorithm is of the Flutter built-in Wrap widget, so any layout that can be achieved with
-wrap, can be achieved with this widget.
+wrap can also be achieved with this widget. Properties like textDirection and verticalDirection will
+also be taken into consideration when paint indicators.
 
 <img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/builder.gif?raw=true" width="200px">
 
 ```dart
+double rating = 0.0;
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(),
-    body: Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: PannableRatingBar.builder(
-          rate: value,
-          alignment: WrapAlignment.center,
-          spacing: 20,
-          runSpacing: 10,
-          itemCount: 20,
-          direction: Axis.vertical,
-          itemBuilder: (context, index) {
-            return const RatingWidget(
-              selectedColor: Colors.yellow,
-              unSelectedColor: Colors.grey,
-              child: Icon(
-                Icons.star,
-                size: 48,
-              ),
-            );
-          },
-          onChanged: (value) {
-            setState(() {
-              this.value = value;
-            });
-          },
-        ),
+PannableRatingBar.builder(
+  rate: rating,
+  alignment: WrapAlignment.center,
+  spacing: 20,
+  runSpacing: 10,
+  itemCount: 20,
+  direction: Axis.vertical,
+  itemBuilder: (context, index) {
+    return const RatingWidget(
+      selectedColor: Colors.yellow,
+      unSelectedColor: Colors.grey,
+      child: Icon(
+        Icons.star,
+        size: 48,
       ),
-    ),
-  );
-}
+    );
+  },
+  onChanged: (value) {
+    setState(() {
+      rating = value;
+    });
+  },
+)
 ```
 
 ## Additional information
