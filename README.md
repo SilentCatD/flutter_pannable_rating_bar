@@ -127,7 +127,7 @@ PannableRatingBar(
 
 The layout algorithm is of the Flutter built-in Wrap widget, so any layout that can be achieved with
 wrap can also be achieved with this widget. Properties like textDirection and verticalDirection will
-also be taken into consideration when paint indicators.
+also be taken into consideration when painting indicators.
 
 <img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/builder.gif?raw=true" width="200px">
 
