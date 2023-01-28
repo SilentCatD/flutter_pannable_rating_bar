@@ -33,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   double rating1 = 0;
   double rating2 = 0;
   double rating3 = 0;
+  double rating4 = 0;
 
   void updateRating1(double value) {
     setState(() {
@@ -49,6 +50,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void updateRating3(double value) {
     setState(() {
       rating3 = value;
+    });
+  }
+
+  void updateRating4(double value) {
+    setState(() {
+      rating4 = value;
     });
   }
 
@@ -70,6 +77,9 @@ class _MyHomePageState extends State<MyHomePage> {
               Tab(
                 text: "Multiple",
               ),
+              Tab(
+                text: "Animation",
+              )
             ],
           ),
         ),
@@ -201,6 +211,33 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                     ),
                   )
+                ],
+              ),
+            ),
+            Center(
+              child: PannableRatingBar(
+                rate: rating4,
+                spacing: 20,
+                onChanged: updateRating4,
+                items: [
+                  RatingWidget(
+                    selectedColor: rating4 <= 0.5 ? Colors.red : Colors.green,
+                    unSelectedColor: Colors.grey,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child: rating4 <= 0.5
+                          ? const Icon(
+                              Icons.sentiment_very_dissatisfied,
+                              key: ValueKey("sad"),
+                              size: 100,
+                            )
+                          : const Icon(
+                              Icons.sentiment_satisfied,
+                              key: ValueKey("happy"),
+                              size: 100,
+                            ),
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -1,3 +1,8 @@
+## 2.1.0+2
+
+* Add new gif
+* Add more example
+
 ## 2.1.0+1
 
 * Add new gif file.

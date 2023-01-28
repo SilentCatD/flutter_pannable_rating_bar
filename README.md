@@ -5,10 +5,10 @@
 * Support any fraction value
 * Customizable rating widget, the degree of customizable is really high, each widget don't have to
 be the same size, don't even have to use the same indication color.
-* Hit test correctly, render object of each child widget is used for hitTest, so the hitTest result
-is as correct as it can be.
-* Make use of Flutters `Wrap` widget, that mean you can achieve any layout that Wrap supported,
-properties `textDirection` and `verticalDirection` of Wrap will also be taken into consideration 
+* Hit test correctly, render object of each child widget is used for `hitTest`, so the `hitTest` 
+result is as correct as it can be.
+* Make use of Flutters `Wrap` widget, that mean you can achieve any layout that `Wrap` supported,
+properties `textDirection` and `verticalDirection` of `Wrap` will also be taken into consideration 
 when painting the indicator.
 
 ## Getting started
@@ -146,6 +146,45 @@ PannableRatingBar.builder(
 )
 ```
 
+Switch the properties for something else depend on the rating value.
+
+<img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/animation.gif?raw=true" width="200px">
+
+```dart
+double rating = 0;
+
+PannableRatingBar(
+    rate: rating,
+    spacing: 20,
+    onChanged: (value){
+      setState((){
+        rating = value;
+      });
+    },
+    items: [
+      RatingWidget(
+        selectedColor: rating <= 0.5 ? Colors.red : Colors.green,
+        unSelectedColor: Colors.grey,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: rating <= 0.5
+              ? const Icon(
+                  Icons.sentiment_very_dissatisfied,
+                  key: ValueKey("sad"),
+                  size: 100,
+                )
+              : const Icon(
+                  Icons.sentiment_satisfied,
+                  key: ValueKey("happy"),
+                  size: 100,
+                ),
+        ),
+      ),
+    ],
+),
+```
+
 ## Additional information
+
 
 Have any idea to improve it? Just raise an issue in the repo!
