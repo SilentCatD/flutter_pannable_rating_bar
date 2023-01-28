@@ -1,16 +1,3 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
-
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
 [![pub package](https://img.shields.io/pub/v/flutter_pannable_rating_bar?color=green&include_prereleases&style=plastic)](https://pub.dev/packages/flutter_pannable_rating_bar)
 
 ## Features
@@ -20,9 +7,9 @@ and the Flutter guide for
 be the same size, don't even have to use the same indication color.
 * Hit test correctly, render object of each child widget is used for hitTest, so the hitTest result
 is as correct as it can be.
-* Make use of Flutters Wrap widget, that mean you can achieve any layout that Wrap supported,
-properties textDirection and verticalDirection of Wrap will also be taken into consideration when
-painting the indicator.
+* Make use of Flutters `Wrap` widget, that mean you can achieve any layout that Wrap supported,
+properties `textDirection` and `verticalDirection` of Wrap will also be taken into consideration 
+when painting the indicator.
 
 ## Getting started
 
@@ -35,9 +22,9 @@ import 'package:flutter_pannable_rating_bar/flutter_pannable_rating_bar.dart';
 ## Usage
 
 The widget itself is completely Stateless, that mean you can manipulate any value that the callback
-provided and use it as the value for PannableRatingBar.
+provided and use it as the value for `PannableRatingBar`.
 
-Just setState with the value provided in onChanged call back, and it will be correctly distributed
+Just rebuild with the value provided in onChanged call back, and it will be correctly distributed
 for each rate widget respectively.
 
 <img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/basics.gif?raw=true" width="200px">
@@ -125,9 +112,9 @@ PannableRatingBar(
 )
 ```
 
-The layout algorithm is of the Flutter built-in Wrap widget, so any layout that can be achieved with
-wrap can also be achieved with this widget. Properties like textDirection and verticalDirection will
-also be taken into consideration when painting indicators.
+The layout algorithm is of the Flutter built-in `Wrap` widget, so any layout that can be achieved 
+with wrap can also be achieved with this widget. Properties like `textDirection` and 
+`verticalDirection` will also be taken into consideration when painting indicators.
 
 <img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/builder.gif?raw=true" width="200px">
 

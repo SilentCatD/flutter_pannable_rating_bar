@@ -1,3 +1,8 @@
+## 2.1.0+1
+
+* Add new gif file.
+* Add example file in.
+
 ## 2.1.0
 
 * Edit the README.md code snippets, make the use of this widget more comprehensible.
