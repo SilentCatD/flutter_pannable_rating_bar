@@ -1,5 +1,12 @@
 [![pub package](https://img.shields.io/pub/v/flutter_pannable_rating_bar?color=green&include_prereleases&style=plastic)](https://pub.dev/packages/flutter_pannable_rating_bar)
 
+# PannableRatingBar
+
+Introducing a new and improved rating bar for Flutter, offering versatility and full customization. 
+Unlike other rating bars, this one allows for any value to be selected, not just full or half 
+ratings when interacted. Both tap and drag gestures are seamlessly supported, providing a smooth 
+user experience.
+
 ## Features
 * Offers fractional values for rating
 * High degree of customization for the rating widgets, which can be of different sizes, shapes, and colors.
