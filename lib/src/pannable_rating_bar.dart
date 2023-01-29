@@ -322,7 +322,7 @@ class _RenderPannableWrap extends RenderWrap {
   @override
   void handleEvent(
       PointerEvent event, covariant HitTestEntry<HitTestTarget> entry) {
-    if (event is PointerDownEvent) {
+    if (event is PointerDownEvent && onChanged != null) {
       _drag.addPointer(event);
       _tap.addPointer(event);
     }

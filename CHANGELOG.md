@@ -1,3 +1,7 @@
+## 2.1.1
+
+* Skip the process of finding rate value when `onChanged` callback is null.
+
 ## 2.1.0+3
 
 * Edit in example file.
