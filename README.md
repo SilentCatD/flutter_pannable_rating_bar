@@ -1,8 +1,6 @@
 [![pub package](https://img.shields.io/pub/v/flutter_pannable_rating_bar?color=green&include_prereleases&style=plastic)](https://pub.dev/packages/flutter_pannable_rating_bar)
 
 ## Features
-
-* Features of the Pannable Rating Bar
 * Offers fractional values for rating
 * High degree of customization for the rating widgets, which can be of different sizes, shapes, and colors.
 * Precise hit testing, as the child widget's render object is utilized to determine the results.

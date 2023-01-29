@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.3.0+1
+
+* Documentation: Small change in README.
+
 ## 2.3.0
 * New feature: Added ability to filter out gestures - choose between `tapOnly` or `tapAndDrag`.
 * New feature: Getter for `itemCount` added. Subclasses of `PannableRatingBar` can now access it.
