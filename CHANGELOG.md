@@ -1,55 +1,44 @@
-## 2.2.0
+# Release Notes
 
-* Add `minRating` and `maxRating` params.
+## 2.3.0
+* New feature: Added ability to filter out gestures - choose between `tapOnly` or `tapAndDrag`.
+* New feature: Getter for `itemCount` added. Subclasses of `PannableRatingBar` can now access it.
+* Documentation: Most of the docs have been rewritten with GPT under my supervision.
+
+## 2.2.0
+* New feature: Added `minRating` and `maxRating` parameters.
 
 ## 2.1.2
-
-* Change the blendMode to `srcIn` instead of `srcATop`.
+* Update: `BlendMode` changed to `srcIn` instead of `srcATop`.
 
 ## 2.1.1
-
-* Skip the process of finding rate value when `onChanged` callback is null.
+* Optimization: Skip rate calculation process when `onChanged` callback is null.
 
 ## 2.1.0+3
-
-* Edit in example file.
+* Documentation: Updated example file.
 
 ## 2.1.0+2
-
-* Add new gif
-* Add more example
+* Documentation: Added new gif and more examples.
 
 ## 2.1.0+1
-
-* Add new gif file.
-* Add example file in.
+* Documentation: Added new gif file and example file.
 
 ## 2.1.0
-
-* Edit the README.md code snippets, make the use of this widget more comprehensible.
-* Remove constraint of the `rate` value. Now this value can be set as negative or bigger than
-  itemCount.
-* Add support for `Wrap` properties: `textDirection` and `verticleDirection`. The widget will now
-  paint indicators correctly and take these 2 properties into consideration.
-* Remove Non-nullable constraint of `RatingWidget.unSelectedColor`, this properties is now nullable,
-  and if it is, then the background painting will be skipped. Otherwise, implementation of the
-  drawing has changed from ShaderMask to ColorFilter.
+* Documentation: README.md code snippets updated for better comprehension of widget usage.
+* Update: Constraint for rate value removed. It can now be set as negative or greater than `itemCount`.
+* New feature: Support for `Wrap` properties added - `textDirection` and `verticalDirection`. The widget now takes these properties into consideration and paints indicators correctly.
+* Update: Non-nullable constraint of `RatingWidget.unSelectedColor` removed. It is now nullable, and if set to null, background painting will be skipped. The implementation of drawing changed from `ShaderMask` to `ColorFilter`.
 
 ## 2.0.1
-
-* add params for pixels compensation, see this
-  issue: https://github.com/flutter/flutter/issues/98464
+* New feature: Parameter for pixels compensation added. Refer to this issue: https://github.com/flutter/flutter/issues/98464.
 
 ## 2.0.0
-
 * BREAKING CHANGES!
-* Support customize each rating widget.
-* Support builder constructor.
+* New feature: Added support for customizing each rating widget.
+* New feature: Added builder constructor support.
 
 ## 1.0.0
-
-* Release
+* Initial release.
 
 ## 0.0.1
-
-* Prepare for release
+* Preparation for release.

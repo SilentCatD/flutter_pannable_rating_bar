@@ -2,6 +2,16 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+/// The GestureType enumeration provides a way to specify the type of gesture
+/// used to interact with the [PannableRatingBar].
+/// When set to GestureType.tapOnly, only tap events are accepted.
+/// On the other hand, when set to GestureType.tapAndDrag, both tap and drag
+/// events are supported.
+enum GestureType {
+  tapOnly,
+  tapAndDrag,
+}
+
 /// Configuration for widget used as a rate widget.
 class RatingWidget {
   const RatingWidget({
@@ -10,19 +20,20 @@ class RatingWidget {
     required this.child,
   });
 
-  /// The widget to be used as a rate widget, [selectedColor] and
-  /// [unSelectedColor] will be draw on this. The widget can be of any size,
-  /// shape, type,... and different [RatingWidget] do NOT have to be similar
-  /// in any of the above aspects.
+  /// Specifies the custom widget to be used as the rating indicator. The
+  /// [child] can be of any size, shape, or type and does not have to be similar
+  /// to other indicators. The [selectedColor] and [unSelectedColor] will be
+  /// drawn on the [child].
   final Widget child;
 
-  /// Color that will be draw on [child] to indicate the portion of current
-  /// selection, default to [Colors.yellow].
+  /// The [selectedColor] property specifies the color that will be drawn on
+  /// [child] to indicate the current selection. It defaults to [Colors.yellow].
   final Color selectedColor;
 
-  /// Color that will be draw on [child], but bellow [selectedColor] to indicate
-  /// the not-selected portion. Set this value to null to skip the drawing of
-  /// background color filter layer, default to null.
+  /// The color used for the unselected portion of the rating, which will be
+  /// drawn below [selectedColor]. By default, this is set to null, meaning the
+  /// background color filter layer will not be drawn. If you wish to specify a
+  /// color, simply set this property to the desired color.
   final Color? unSelectedColor;
 }
 
@@ -30,26 +41,24 @@ class RatingWidget {
 /// [PannableRatingBar.builder]
 typedef IndexedRatingWidgetBuilder = RatingWidget Function(BuildContext, int);
 
-/// A rating bar widget that support both tap and pan (drag) event, any value
-/// for [PannableRatingBar.rate] is supported, it's NOT limited
-/// to half or full only, the value will be correctly distributed to
-/// [RatingWidget.child] each respectively.
-///
-/// The widget itself is completely stateless and will report it's value through
-/// [PannableRatingBar.onChanged] callback. The reported value can be processed
-/// anyway one want.
-///
-/// This widget support all property of the Flutter's [Wrap] widget, in fact,
-/// it use [Wrap] to laid out it's children, for more information about each
-/// of these property, refer to documentation of [Wrap].
-/// This widget will also take [Wrap.textDirection] and [Wrap.verticalDirection]
-/// into consideration when perform drawing.
+/// A stateless rating bar widget that supports both tap and pan (drag) events,
+/// with no limits on the value of [PannableRatingBar.rate]. The value is
+/// distributed to each [RatingWidget.child] respectively.
+
+/// The value is reported through the [PannableRatingBar.onChanged] callback and
+/// can be used as desired.
+
+/// This widget uses Flutter's [Wrap] layout and supports all its properties.
+/// For more information on these properties, refer to the [Wrap] documentation.
+/// It also takes [Wrap.textDirection] and [Wrap.verticalDirection] into account
+/// during drawing.
 class PannableRatingBar extends StatelessWidget {
-  /// Create a [PannableRatingBar] widget, one must provide a list of
-  /// [RatingWidget] to be used as children. If many of the items is similar,
-  /// the use of [PannableRatingBar.builder] should be considered.
-  /// Items provided do not have to be the same, each can have different size,
-  /// shape,...
+  /// Constructs a [PannableRatingBar] widget with a required [rate] and a list
+  /// of [RatingWidget] [items].
+  /// If multiple items have similar features, consider using
+  /// [PannableRatingBar.builder].
+  /// The items do not have to be the same, and each item can have its own
+  /// unique size, shape, etc.
   const PannableRatingBar({
     Key? key,
     required this.rate,
@@ -67,15 +76,21 @@ class PannableRatingBar extends StatelessWidget {
     this.enablePixelsCompensation = true,
     this.minRating,
     this.maxRating,
+    this.gestureType = GestureType.tapAndDrag,
   })  : _useItemBuilder = false,
         _items = items,
         _itemCount = items.length,
         _itemBuilder = null,
         super(key: key);
 
-  /// Create the [PannableRatingBar] widget with builder function,
-  /// items returned from this function do not have to be the same, each can
-  /// have different size, shape,...
+  /// Construct a [PannableRatingBar] using a builder function. This constructor
+  /// allows you to generate each item on-demand, which can be useful if many of
+  /// the items are similar.
+  /// The items generated by [itemBuilder] can have different size, shape, etc.
+  ///
+  /// The required parameters for this constructor are [itemBuilder] and
+  /// [itemCount]. [itemBuilder] takes in an index and returns a [RatingWidget].
+  /// [itemCount] is the number of items the builder should generate.
   const PannableRatingBar.builder({
     Key? key,
     required this.rate,
@@ -94,6 +109,7 @@ class PannableRatingBar extends StatelessWidget {
     this.enablePixelsCompensation = true,
     this.minRating,
     this.maxRating,
+    this.gestureType = GestureType.tapAndDrag,
   })  : _useItemBuilder = true,
         _items = null,
         _itemCount = itemCount,
@@ -104,41 +120,64 @@ class PannableRatingBar extends StatelessWidget {
   /// distributed for all [RatingWidget.child] children.
   final double rate;
 
-  /// The callback each time there's new value of rate to be received.
-  /// Note that this itself only reporting the next value, to actually change
-  /// the visual of this widget, please rebuild with new [rate] value.
+  /// The callback each time there's new value of rate to be received. Note that
+  /// this itself only reporting the next value, to actually change the visual
+  /// of this widget, it needs to be rebuilt with a new [rate] value.
   final ValueChanged<double>? onChanged;
 
-  /// See this issue: https://github.com/flutter/flutter/issues/98464
-  /// So until they fixed it, all child widget will have a margin of 1px when
-  /// this flag is true.
+  /// A flag to determine whether the child widgets will have a margin of 1px
+  /// or not.
+  /// This is a workaround for an issue in Flutter
+  /// (https://github.com/flutter/flutter/issues/98464).
   final bool enablePixelsCompensation;
 
-  /// Value to be considered when [onChanged] fired, the callback will be
-  /// skipped if in-coming value is smaller than [minRating].
+  /// The minimum value to be considered when [onChanged] is fired. The callback
+  /// will be skipped if the incoming value is smaller than [minRating].
   final double? minRating;
 
-  /// Value to be considered when [onChanged] fired, the callback will be
-  /// skipped if in-coming value is bigger than [maxRating].
+  /// The maximum value to be considered when [onChanged] is fired. The callback
+  /// will be skipped if the incoming value is bigger than [maxRating].
   final double? maxRating;
 
-  // [Wrap] properties, please do see the document of the Flutter [Wrap] widget
-  // to learn more about these.
+  /// Specifies the gesture [PannableRatingBar] will respond to. Default to
+  /// [GestureType.tapAndDrag].
+  final GestureType gestureType;
+
+  /// Refer to [Wrap.direction]
   final Axis direction;
+
+  /// Refer to [Wrap.alignment]
   final WrapAlignment alignment;
+
+  /// Refer to [Wrap.spacing]
   final double spacing;
+
+  /// Refer to [Wrap.runAlignment]
   final WrapAlignment runAlignment;
+
+  /// Refer to [Wrap.runSpacing]
   final double runSpacing;
+
+  /// Refer to [Wrap.crossAxisAlignment]
   final WrapCrossAlignment crossAxisAlignment;
+
+  /// Refer to [Wrap.textDirection]
   final TextDirection? textDirection;
+
+  /// Refer to [Wrap.verticalDirection]
   final VerticalDirection verticalDirection;
+
+  /// Refer to [Wrap.clipBehavior]
   final Clip clipBehavior;
 
-  // private property used to store data needed of each constructor respectively
+  // private properties used to store data needed of each constructor
+  // respectively.
   final bool _useItemBuilder;
   final List<RatingWidget>? _items;
   final IndexedRatingWidgetBuilder? _itemBuilder;
   final int _itemCount;
+
+  int get itemCount => _itemCount;
 
   double calcPercent(int index, double rate) {
     if (index < rate.floor()) {
@@ -191,6 +230,7 @@ class PannableRatingBar extends StatelessWidget {
       onChanged: onChanged,
       maxRating: maxRating,
       minRating: minRating,
+      gestureType: gestureType,
       children: children,
     );
   }
@@ -209,6 +249,7 @@ class _PannableWrap extends Wrap {
     required Clip clipBehavior,
     required List<Widget> children,
     required this.onChanged,
+    required this.gestureType,
     this.maxRating,
     this.minRating,
   }) : super(
@@ -226,6 +267,7 @@ class _PannableWrap extends Wrap {
   final ValueChanged<double>? onChanged;
   final double? minRating;
   final double? maxRating;
+  final GestureType gestureType;
 
   @override
   RenderWrap createRenderObject(BuildContext context) {
@@ -242,6 +284,7 @@ class _PannableWrap extends Wrap {
       onChanged: onChanged,
       maxRating: maxRating,
       minRating: minRating,
+      gestureType: gestureType,
     );
   }
 
@@ -260,7 +303,8 @@ class _PannableWrap extends Wrap {
       ..clipBehavior = clipBehavior
       ..onChanged = onChanged
       ..maxRating = maxRating
-      ..minRating = minRating;
+      ..minRating = minRating
+      ..gestureType = gestureType;
   }
 }
 
@@ -276,6 +320,7 @@ class _RenderPannableWrap extends RenderWrap {
     TextDirection? textDirection,
     VerticalDirection verticalDirection = VerticalDirection.down,
     Clip clipBehavior = Clip.none,
+    required this.gestureType,
     this.maxRating,
     this.minRating,
     this.onChanged,
@@ -315,6 +360,7 @@ class _RenderPannableWrap extends RenderWrap {
 
   double? minRating;
   double? maxRating;
+  GestureType gestureType;
 
   void _onChange(Offset position) {
     _RenderRateItem? child = firstChild as _RenderRateItem?;
@@ -352,8 +398,22 @@ class _RenderPannableWrap extends RenderWrap {
   void handleEvent(
       PointerEvent event, covariant HitTestEntry<HitTestTarget> entry) {
     if (event is PointerDownEvent && onChanged != null) {
-      _drag.addPointer(event);
-      _tap.addPointer(event);
+      bool useTap = true;
+      bool useDrag = true;
+      switch (gestureType) {
+        case GestureType.tapOnly:
+          useDrag = false;
+          break;
+        case GestureType.tapAndDrag:
+        default:
+          break;
+      }
+      if (useDrag) {
+        _drag.addPointer(event);
+      }
+      if (useTap) {
+        _tap.addPointer(event);
+      }
     }
   }
 
