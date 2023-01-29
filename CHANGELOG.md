@@ -1,3 +1,7 @@
+## 2.2.0
+
+* Add `minRating` and `maxRating` params.
+
 ## 2.1.2
 
 * Change the blendMode to `srcIn` instead of `srcATop`.

@@ -65,6 +65,8 @@ class PannableRatingBar extends StatelessWidget {
     this.verticalDirection = VerticalDirection.down,
     this.clipBehavior = Clip.none,
     this.enablePixelsCompensation = true,
+    this.minRating,
+    this.maxRating,
   })  : _useItemBuilder = false,
         _items = items,
         _itemCount = items.length,
@@ -90,6 +92,8 @@ class PannableRatingBar extends StatelessWidget {
     this.verticalDirection = VerticalDirection.down,
     this.clipBehavior = Clip.none,
     this.enablePixelsCompensation = true,
+    this.minRating,
+    this.maxRating,
   })  : _useItemBuilder = true,
         _items = null,
         _itemCount = itemCount,
@@ -109,6 +113,14 @@ class PannableRatingBar extends StatelessWidget {
   /// So until they fixed it, all child widget will have a margin of 1px when
   /// this flag is true.
   final bool enablePixelsCompensation;
+
+  /// Value to be considered when [onChanged] fired, the callback will be
+  /// skipped if in-coming value is smaller than [minRating].
+  final double? minRating;
+
+  /// Value to be considered when [onChanged] fired, the callback will be
+  /// skipped if in-coming value is bigger than [maxRating].
+  final double? maxRating;
 
   // [Wrap] properties, please do see the document of the Flutter [Wrap] widget
   // to learn more about these.
@@ -177,6 +189,8 @@ class PannableRatingBar extends StatelessWidget {
       verticalDirection: verticalDirection,
       clipBehavior: clipBehavior,
       onChanged: onChanged,
+      maxRating: maxRating,
+      minRating: minRating,
       children: children,
     );
   }
@@ -195,6 +209,8 @@ class _PannableWrap extends Wrap {
     required Clip clipBehavior,
     required List<Widget> children,
     required this.onChanged,
+    this.maxRating,
+    this.minRating,
   }) : super(
           direction: direction,
           alignment: alignment,
@@ -208,6 +224,8 @@ class _PannableWrap extends Wrap {
           children: children,
         );
   final ValueChanged<double>? onChanged;
+  final double? minRating;
+  final double? maxRating;
 
   @override
   RenderWrap createRenderObject(BuildContext context) {
@@ -222,6 +240,8 @@ class _PannableWrap extends Wrap {
       verticalDirection: verticalDirection,
       clipBehavior: clipBehavior,
       onChanged: onChanged,
+      maxRating: maxRating,
+      minRating: minRating,
     );
   }
 
@@ -238,7 +258,9 @@ class _PannableWrap extends Wrap {
       ..textDirection = textDirection ?? Directionality.maybeOf(context)
       ..verticalDirection = verticalDirection
       ..clipBehavior = clipBehavior
-      ..onChanged = onChanged;
+      ..onChanged = onChanged
+      ..maxRating = maxRating
+      ..minRating = minRating;
   }
 }
 
@@ -254,6 +276,8 @@ class _RenderPannableWrap extends RenderWrap {
     TextDirection? textDirection,
     VerticalDirection verticalDirection = VerticalDirection.down,
     Clip clipBehavior = Clip.none,
+    this.maxRating,
+    this.minRating,
     this.onChanged,
   }) : super(
           children: children,
@@ -289,6 +313,9 @@ class _RenderPannableWrap extends RenderWrap {
   late final TapGestureRecognizer _tap;
   late final PanGestureRecognizer _drag;
 
+  double? minRating;
+  double? maxRating;
+
   void _onChange(Offset position) {
     _RenderRateItem? child = firstChild as _RenderRateItem?;
     final result = BoxHitTestResult();
@@ -311,6 +338,8 @@ class _RenderPannableWrap extends RenderWrap {
       if (isHit && percent != null) {
         final rounded =
             double.parse((childIndex + percent!).toStringAsFixed(1));
+        if (minRating != null && rounded < minRating!) return;
+        if (maxRating != null && rounded > maxRating!) return;
         onChanged?.call(rounded);
         break;
       }
