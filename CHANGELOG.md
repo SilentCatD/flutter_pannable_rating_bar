@@ -1,3 +1,7 @@
+## 2.1.2
+
+* Change the blendMode to `srcIn` instead of `srcATop`.
+
 ## 2.1.1
 
 * Skip the process of finding rate value when `onChanged` callback is null.

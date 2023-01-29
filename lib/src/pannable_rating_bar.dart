@@ -492,7 +492,7 @@ class _RenderRateItem extends RenderProxyBox {
     _backgroundHandle.layer ??= ColorFilterLayer();
     _backgroundHandle.layer!.colorFilter = ColorFilter.mode(
       unSelectedColor!,
-      BlendMode.srcATop,
+      BlendMode.srcIn,
     );
 
     context.pushLayer(_backgroundHandle.layer!, paintChild, offset);
@@ -528,7 +528,7 @@ class _RenderRateItem extends RenderProxyBox {
               tileMode: TileMode.decal, colors: [selectedColor, selectedColor])
           .createShader(Offset.zero & maskSize)
       ..maskRect = maskRect
-      ..blendMode = BlendMode.srcATop;
+      ..blendMode = BlendMode.srcIn;
     context.pushLayer(_foregroundHandle.layer!, paintChild, offset);
   }
 
