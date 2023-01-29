@@ -4,16 +4,17 @@
 
 Introducing a new and improved rating bar for Flutter, offering versatility and full customization. 
 Unlike other rating bars, this one allows for any value to be selected, not just full or half 
-ratings when interacted. Both tap and drag gestures are seamlessly supported, providing a smooth 
+ratings when interacted. Tap, drag and hover gestures are seamlessly supported, providing a smooth 
 user experience.
 
 ## Features
 * Offers fractional values for rating
 * High degree of customization for the rating widgets, which can be of different sizes, shapes, and colors.
 * Precise hit testing, as the child widget's render object is utilized to determine the results.
-* Allows for filtering gestures with either tapOnly or dragAndTap options.
-* Built on Flutter's Wrap widget, offering a variety of supported layouts, including consideration 
-of Wrap properties such as textDirection and verticalDirection when painting the indicators.
+* Allows for filtering gestures with either `tapOnly` or `dragAndTap` options.
+* Rating reports on cursor hovering supported.
+* Built on Flutter's `Wrap` widget, offering a variety of supported layouts, including consideration 
+of `Wrap` properties such as `textDirection` and `verticalDirection` when painting the indicators.
 
 ## Getting started
 
@@ -27,8 +28,8 @@ import 'package:flutter_pannable_rating_bar/flutter_pannable_rating_bar.dart';
 
 This widget is stateless and highly flexible, allowing you to easily manipulate values and 
 customize the display of the `PannableRatingBar`. Simply rebuild the widget with the value provided 
-in the `onChanged` callback and the widget will automatically adjust the rating distribution across 
-each rating widget.
+in the `onChanged` callback or `onHover` callback and the widget will automatically adjust the 
+rating distribution across each rating widget.
 
 <img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/basics.gif?raw=true" width="200px">
 
@@ -46,7 +47,31 @@ PannableRatingBar(
         size: 48,
       ),
     )),
-  onChanged: (value) {
+  onChanged: (value) { // the rating value is updated on tap or drag.
+    setState(() {
+      rating = value;
+    });
+  },
+)
+```
+
+The widget also support getting rate value by hovering with `onHover` callback.
+Try this on Web for desktop related device for good "hovering" experiences.
+```dart
+double rating = 0.0;
+
+PannableRatingBar(
+  rate: rating,
+  items: List.generate(5, (index) =>
+    const RatingWidget(
+      selectedColor: Colors.yellow,
+      unSelectedColor: Colors.grey,
+      child: Icon(
+        Icons.star,
+        size: 48,
+      ),
+    )),
+  onHover: (value) { // the rating value is updated every time the cursor moves over a new item.
     setState(() {
       rating = value;
     });
@@ -190,5 +215,5 @@ PannableRatingBar(
 
 ## Additional information
 
+If you have any suggestions for improvement, simply create an issue in the repository!
 
-Have any idea to improve it? Just raise an issue in the repo!

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pannable_rating_bar/flutter_pannable_rating_bar.dart';
 
+/// For the [onHover] example, view on Web or desktop related device for best
+/// experiences.
+
 void main() {
   runApp(const MyApp());
 }
@@ -34,6 +37,8 @@ class _MyHomePageState extends State<MyHomePage> {
   double rating2 = 0;
   double rating3 = 0;
   double rating4 = 0;
+  double rating5 = 0;
+  double rating5Set = 0;
 
   void updateRating1(double value) {
     setState(() {
@@ -59,14 +64,27 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void updateRating5(double value) {
+    setState(() {
+      rating5 = value;
+    });
+  }
+
+  void setRating5(double value) {
+    setState(() {
+      rating5Set = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
           bottom: const TabBar(
+            isScrollable: true,
             tabs: [
               Tab(
                 text: "Basics",
@@ -79,6 +97,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Tab(
                 text: "Animation",
+              ),
+              Tab(
+                text: "Hover",
               )
             ],
           ),
@@ -215,27 +236,71 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             Center(
-              child: PannableRatingBar(
-                rate: rating4,
-                spacing: 20,
-                onChanged: updateRating4,
-                items: [
-                  RatingWidget(
-                    selectedColor: rating4 <= 0.5 ? Colors.red : Colors.green,
-                    unSelectedColor: Colors.grey,
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      child: rating4 <= 0.5
-                          ? const Icon(
-                              Icons.sentiment_very_dissatisfied,
-                              key: ValueKey("sad"),
-                              size: 100,
-                            )
-                          : const Icon(
-                              Icons.sentiment_satisfied,
-                              key: ValueKey("happy"),
-                              size: 100,
-                            ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$rating4',
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  PannableRatingBar(
+                    rate: rating4,
+                    spacing: 20,
+                    onChanged: updateRating4,
+                    items: [
+                      RatingWidget(
+                        selectedColor:
+                            rating4 <= 0.5 ? Colors.red : Colors.green,
+                        unSelectedColor: Colors.grey,
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: rating4 <= 0.5
+                              ? const Icon(
+                                  Icons.sentiment_very_dissatisfied,
+                                  key: ValueKey("sad"),
+                                  size: 100,
+                                )
+                              : const Icon(
+                                  Icons.sentiment_satisfied,
+                                  key: ValueKey("happy"),
+                                  size: 100,
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    '$rating5Set',
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  PannableRatingBar(
+                    rate: rating5,
+                    onChanged: setRating5,
+                    onHover: updateRating5,
+                    spacing: 20,
+                    items: List.generate(
+                      5,
+                      (index) => const RatingWidget(
+                        selectedColor: Colors.yellow,
+                        unSelectedColor: Colors.grey,
+                        child: Icon(
+                          Icons.star,
+                          size: 48,
+                        ),
+                      ),
                     ),
                   ),
                 ],

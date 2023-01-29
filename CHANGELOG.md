@@ -1,5 +1,11 @@
 # Release Notes
 
+## 2.4.0
+
+* New feature: Added `onHover` callback, which will reports the rating value of the current cursor
+position.
+* Documentation: Adding example for `onHover` use case.
+
 ## 2.3.0+2
 
 * Documentation: Changes in package description.

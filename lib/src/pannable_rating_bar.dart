@@ -2,10 +2,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-/// The GestureType enumeration provides a way to specify the type of gesture
-/// used to interact with the [PannableRatingBar].
-/// When set to GestureType.tapOnly, only tap events are accepted.
-/// On the other hand, when set to GestureType.tapAndDrag, both tap and drag
+/// The [GestureType] enumeration provides a way to specify the type of gesture
+/// used to interact with the [PannableRatingBar.onChanged] callback.
+/// When set to [GestureType.tapOnly], only tap events are accepted.
+/// On the other hand, when set to [GestureType.tapAndDrag], both tap and drag
 /// events are supported.
 enum GestureType {
   tapOnly,
@@ -41,12 +41,15 @@ class RatingWidget {
 /// [PannableRatingBar.builder]
 typedef IndexedRatingWidgetBuilder = RatingWidget Function(BuildContext, int);
 
-/// A stateless rating bar widget that supports both tap and pan (drag) events,
-/// with no limits on the value of [PannableRatingBar.rate]. The value is
-/// distributed to each [RatingWidget.child] respectively.
+/// A stateless rating bar widget that supports tap, pan (drag) and hover
+/// events, with no limits on the value of [PannableRatingBar.rate]. The value
+/// is distributed to each [RatingWidget.child] respectively.
 
-/// The value is reported through the [PannableRatingBar.onChanged] callback and
-/// can be used as desired.
+/// The value is reported through the [PannableRatingBar.onChanged] callback for
+/// tap or drag event and can be used as desired.
+
+/// Similarly, the value is reported through the [PannableRatingBar.onHover]
+/// callback for hover event and can be used as desired.
 
 /// This widget uses Flutter's [Wrap] layout and supports all its properties.
 /// For more information on these properties, refer to the [Wrap] documentation.
@@ -54,7 +57,7 @@ typedef IndexedRatingWidgetBuilder = RatingWidget Function(BuildContext, int);
 /// during drawing.
 class PannableRatingBar extends StatelessWidget {
   /// Constructs a [PannableRatingBar] widget with a required [rate] and a list
-  /// of [RatingWidget] [items].
+  /// of [RatingWidget] items.
   /// If multiple items have similar features, consider using
   /// [PannableRatingBar.builder].
   /// The items do not have to be the same, and each item can have its own
@@ -64,6 +67,7 @@ class PannableRatingBar extends StatelessWidget {
     required this.rate,
     required List<RatingWidget> items,
     this.onChanged,
+    this.onHover,
     this.direction = Axis.horizontal,
     this.alignment = WrapAlignment.center,
     this.spacing = 0,
@@ -97,6 +101,7 @@ class PannableRatingBar extends StatelessWidget {
     required IndexedRatingWidgetBuilder itemBuilder,
     required int itemCount,
     this.onChanged,
+    this.onHover,
     this.direction = Axis.horizontal,
     this.alignment = WrapAlignment.center,
     this.spacing = 0,
@@ -120,10 +125,19 @@ class PannableRatingBar extends StatelessWidget {
   /// distributed for all [RatingWidget.child] children.
   final double rate;
 
-  /// The callback each time there's new value of rate to be received. Note that
-  /// this itself only reporting the next value, to actually change the visual
-  /// of this widget, it needs to be rebuilt with a new [rate] value.
+  /// The callback is triggered each time there's a new value of [rate]
+  /// that is received through a tap or drag pointer event.
+  /// This callback only reports the next value, to actually change the visual
+  /// appearance of the widget, it needs to be rebuilt with the new [rate]
+  /// value.
   final ValueChanged<double>? onChanged;
+
+  /// The callback is triggered whenever the mouse hovers over the rating
+  /// widgets. It reports the rate value at that pointer position.
+  /// This callback only reports the next value, to actually change the visual
+  /// appearance of the widget, it needs to be rebuilt with the new [rate]
+  /// value.
+  final ValueChanged<double>? onHover;
 
   /// A flag to determine whether the child widgets will have a margin of 1px
   /// or not.
@@ -131,16 +145,16 @@ class PannableRatingBar extends StatelessWidget {
   /// (https://github.com/flutter/flutter/issues/98464).
   final bool enablePixelsCompensation;
 
-  /// The minimum value to be considered when [onChanged] is fired. The callback
+  /// The minimum value to be considered when callbacks are fired. The callbacks
   /// will be skipped if the incoming value is smaller than [minRating].
   final double? minRating;
 
-  /// The maximum value to be considered when [onChanged] is fired. The callback
+  /// The maximum value to be considered when callbacks are fired. The callbacks
   /// will be skipped if the incoming value is bigger than [maxRating].
   final double? maxRating;
 
-  /// Specifies the gesture [PannableRatingBar] will respond to. Default to
-  /// [GestureType.tapAndDrag].
+  /// Specifies the gesture [PannableRatingBar.onChanged] will respond to.
+  /// Default to [GestureType.tapAndDrag].
   final GestureType gestureType;
 
   /// Refer to [Wrap.direction]
@@ -177,8 +191,11 @@ class PannableRatingBar extends StatelessWidget {
   final IndexedRatingWidgetBuilder? _itemBuilder;
   final int _itemCount;
 
+  /// Retrieves the current number of [RatingWidget]s in this rating bar.
   int get itemCount => _itemCount;
 
+  /// Calculates the distribution of the [rate] value among each of the
+  /// [RatingWidget]s.
   double calcPercent(int index, double rate) {
     if (index < rate.floor()) {
       return 1;
@@ -192,7 +209,7 @@ class PannableRatingBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<_RateItem> children = [];
-    for (var i = 0; i < _itemCount; i++) {
+    for (var i = 0; i < itemCount; i++) {
       RatingWidget config;
       if (_useItemBuilder) {
         config = _itemBuilder!.call(context, i);
@@ -228,6 +245,7 @@ class PannableRatingBar extends StatelessWidget {
       verticalDirection: verticalDirection,
       clipBehavior: clipBehavior,
       onChanged: onChanged,
+      onHover: onHover,
       maxRating: maxRating,
       minRating: minRating,
       gestureType: gestureType,
@@ -252,6 +270,7 @@ class _PannableWrap extends Wrap {
     required this.gestureType,
     this.maxRating,
     this.minRating,
+    this.onHover,
   }) : super(
           direction: direction,
           alignment: alignment,
@@ -268,6 +287,7 @@ class _PannableWrap extends Wrap {
   final double? minRating;
   final double? maxRating;
   final GestureType gestureType;
+  final ValueChanged<double>? onHover;
 
   @override
   RenderWrap createRenderObject(BuildContext context) {
@@ -285,6 +305,7 @@ class _PannableWrap extends Wrap {
       maxRating: maxRating,
       minRating: minRating,
       gestureType: gestureType,
+      onHover: onHover,
     );
   }
 
@@ -304,7 +325,8 @@ class _PannableWrap extends Wrap {
       ..onChanged = onChanged
       ..maxRating = maxRating
       ..minRating = minRating
-      ..gestureType = gestureType;
+      ..gestureType = gestureType
+      ..onHover = onHover;
   }
 }
 
@@ -324,6 +346,7 @@ class _RenderPannableWrap extends RenderWrap {
     this.maxRating,
     this.minRating,
     this.onChanged,
+    this.onHover,
   }) : super(
           children: children,
           direction: direction,
@@ -354,6 +377,7 @@ class _RenderPannableWrap extends RenderWrap {
   }
 
   ValueChanged<double>? onChanged;
+  ValueChanged<double>? onHover;
 
   late final TapGestureRecognizer _tap;
   late final PanGestureRecognizer _drag;
@@ -362,7 +386,9 @@ class _RenderPannableWrap extends RenderWrap {
   double? maxRating;
   GestureType gestureType;
 
-  void _onChange(Offset position) {
+  late bool validForMouseTracker;
+
+  double? _hitTestRatingValue(Offset position) {
     _RenderRateItem? child = firstChild as _RenderRateItem?;
     final result = BoxHitTestResult();
     int childIndex = 0;
@@ -384,13 +410,27 @@ class _RenderPannableWrap extends RenderWrap {
       if (isHit && percent != null) {
         final rounded =
             double.parse((childIndex + percent!).toStringAsFixed(1));
-        if (minRating != null && rounded < minRating!) return;
-        if (maxRating != null && rounded > maxRating!) return;
-        onChanged?.call(rounded);
-        break;
+        if (minRating != null && rounded < minRating!) return null;
+        if (maxRating != null && rounded > maxRating!) return null;
+        return rounded;
       }
       childIndex += 1;
       child = childParentData.nextSibling as _RenderRateItem?;
+    }
+    return null;
+  }
+
+  void _onChange(Offset position) {
+    double? value = _hitTestRatingValue(position);
+    if (value != null) {
+      onChanged?.call(value);
+    }
+  }
+
+  void _onHover(Offset position) {
+    double? value = _hitTestRatingValue(position);
+    if (value != null) {
+      onHover?.call(value);
     }
   }
 
@@ -414,6 +454,9 @@ class _RenderPannableWrap extends RenderWrap {
       if (useTap) {
         _tap.addPointer(event);
       }
+    }
+    if (event is PointerHoverEvent && onHover != null) {
+      _onHover(event.localPosition);
     }
   }
 
