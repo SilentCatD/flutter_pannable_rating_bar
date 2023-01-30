@@ -225,6 +225,7 @@ class PannableRatingBar extends StatelessWidget {
       }
       children.add(_RateItem(
         key: ValueKey<int>(i),
+        index: i,
         percent: calcPercent(i, rate),
         selectedColor: config.selectedColor,
         unSelectedColor: config.unSelectedColor,
@@ -391,7 +392,6 @@ class _RenderPannableWrap extends RenderWrap {
   double? _hitTestRatingValue(Offset position) {
     _RenderRateItem? child = firstChild as _RenderRateItem?;
     final result = BoxHitTestResult();
-    int childIndex = 0;
     double? percent;
     while (child != null) {
       final WrapParentData childParentData =
@@ -408,13 +408,11 @@ class _RenderPannableWrap extends RenderWrap {
         },
       );
       if (isHit && percent != null) {
-        final rounded =
-            double.parse((childIndex + percent!).toStringAsFixed(1));
+        final rounded = double.parse((percent!).toStringAsFixed(1));
         if (minRating != null && rounded < minRating!) return null;
         if (maxRating != null && rounded > maxRating!) return null;
         return rounded;
       }
-      childIndex += 1;
       child = childParentData.nextSibling as _RenderRateItem?;
     }
     return null;
@@ -478,6 +476,7 @@ class _RateItem extends SingleChildRenderObjectWidget {
     required this.axis,
     this.textDirection,
     required this.verticalDirection,
+    required this.index,
   })  : assert(percent >= 0 && percent <= 1),
         super(
           key: key,
@@ -489,6 +488,7 @@ class _RateItem extends SingleChildRenderObjectWidget {
   final Axis axis;
   final TextDirection? textDirection;
   final VerticalDirection verticalDirection;
+  final int index;
 
   @override
   RenderObject createRenderObject(BuildContext context) {
@@ -499,6 +499,7 @@ class _RateItem extends SingleChildRenderObjectWidget {
       axis: axis,
       textDirection: textDirection ?? Directionality.maybeOf(context),
       verticalDirection: verticalDirection,
+      index: index,
     );
   }
 
@@ -511,7 +512,8 @@ class _RateItem extends SingleChildRenderObjectWidget {
       ..unSelectedColor = unSelectedColor
       ..axis = axis
       ..verticalDirection = verticalDirection
-      ..textDirection = textDirection ?? Directionality.maybeOf(context);
+      ..textDirection = textDirection ?? Directionality.maybeOf(context)
+      ..index = index;
   }
 }
 
@@ -523,6 +525,7 @@ class _RenderRateItem extends RenderProxyBox {
     required Axis axis,
     required TextDirection? textDirection,
     required VerticalDirection verticalDirection,
+    required this.index,
   })  : _selectedColor = selectedColor,
         _unSelectedColor = unSelectedColor,
         _percent = percent,
@@ -533,6 +536,8 @@ class _RenderRateItem extends RenderProxyBox {
   VerticalDirection _verticalDirection;
 
   VerticalDirection get verticalDirection => _verticalDirection;
+
+  int index;
 
   set verticalDirection(VerticalDirection value) {
     if (value != _verticalDirection) {
@@ -613,7 +618,7 @@ class _RenderRateItem extends RenderProxyBox {
           }
           break;
       }
-      return result;
+      return result + index;
     }
     return null;
   }

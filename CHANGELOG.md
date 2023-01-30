@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.4.1
+
+* Update: changing internal implementation of calculate indexes of children.
+
 ## 2.4.0
 
 * New feature: Added `onHover` callback, which will reports the rating value of the current cursor
