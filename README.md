@@ -55,7 +55,7 @@ PannableRatingBar(
 )
 ```
 
-The widget also supports getting the rate value by hovering with the onHover callback. It works 
+The widget also supports getting the rate value by hovering with the `onHover` callback. It works 
 best on devices that support a mouse cursor, including desktop web browsers.
 
 ```dart

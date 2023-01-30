@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.4.1+1
+
+* Documentation: Fix documentation typo in README.
+
 ## 2.4.1
 
 * Update: changing internal implementation of calculate indexes of children.
