@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.5.0
+
+* New feature: Added `onCompleted` callback, which will reports the rating value at the position
+  which user stop contacting the device.
+
 ## 2.4.1+1
 
 * Documentation: Fix documentation typo in README.
@@ -11,7 +16,7 @@
 ## 2.4.0
 
 * New feature: Added `onHover` callback, which will reports the rating value of the current cursor
-position.
+  position.
 * Documentation: Adding example for `onHover` use case.
 
 ## 2.3.0+2
