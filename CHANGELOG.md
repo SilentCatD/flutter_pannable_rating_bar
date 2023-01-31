@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.5.0+1
+
+* Documentation: Change package description to fit with pub.dev standard.
+
 ## 2.5.0
 
 * New feature: Added `onCompleted` callback, which will reports the rating value at the position
