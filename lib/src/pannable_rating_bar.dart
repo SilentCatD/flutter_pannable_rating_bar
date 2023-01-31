@@ -81,6 +81,7 @@ class PannableRatingBar extends StatelessWidget {
     this.minRating,
     this.maxRating,
     this.gestureType = GestureType.tapAndDrag,
+    this.onCompleted,
   })  : _useItemBuilder = false,
         _items = items,
         _itemCount = items.length,
@@ -115,6 +116,7 @@ class PannableRatingBar extends StatelessWidget {
     this.minRating,
     this.maxRating,
     this.gestureType = GestureType.tapAndDrag,
+    this.onCompleted,
   })  : _useItemBuilder = true,
         _items = null,
         _itemCount = itemCount,
@@ -131,6 +133,12 @@ class PannableRatingBar extends StatelessWidget {
   /// appearance of the widget, it needs to be rebuilt with the new [rate]
   /// value.
   final ValueChanged<double>? onChanged;
+
+  /// The callback function that is triggered when the user has completed the
+  /// rating process, after a touch or drag event has ended. The callback will
+  /// emit the [rate] value at the position where the pointer was released.
+  /// This can be used to get the final rating selected by the user.
+  final ValueChanged<double>? onCompleted;
 
   /// The callback is triggered whenever the mouse hovers over the rating
   /// widgets. It reports the rate value at that pointer position.
@@ -250,6 +258,7 @@ class PannableRatingBar extends StatelessWidget {
       maxRating: maxRating,
       minRating: minRating,
       gestureType: gestureType,
+      onCompleted: onCompleted,
       children: children,
     );
   }
@@ -272,6 +281,7 @@ class _PannableWrap extends Wrap {
     this.maxRating,
     this.minRating,
     this.onHover,
+    this.onCompleted,
   }) : super(
           direction: direction,
           alignment: alignment,
@@ -289,6 +299,7 @@ class _PannableWrap extends Wrap {
   final double? maxRating;
   final GestureType gestureType;
   final ValueChanged<double>? onHover;
+  final ValueChanged<double>? onCompleted;
 
   @override
   RenderWrap createRenderObject(BuildContext context) {
@@ -307,6 +318,7 @@ class _PannableWrap extends Wrap {
       minRating: minRating,
       gestureType: gestureType,
       onHover: onHover,
+      onCompleted: onCompleted,
     );
   }
 
@@ -327,7 +339,8 @@ class _PannableWrap extends Wrap {
       ..maxRating = maxRating
       ..minRating = minRating
       ..gestureType = gestureType
-      ..onHover = onHover;
+      ..onHover = onHover
+      ..onCompleted = onCompleted;
   }
 }
 
@@ -348,6 +361,7 @@ class _RenderPannableWrap extends RenderWrap {
     this.minRating,
     this.onChanged,
     this.onHover,
+    this.onCompleted,
   }) : super(
           children: children,
           direction: direction,
@@ -379,6 +393,7 @@ class _RenderPannableWrap extends RenderWrap {
 
   ValueChanged<double>? onChanged;
   ValueChanged<double>? onHover;
+  ValueChanged<double>? onCompleted;
 
   late final TapGestureRecognizer _tap;
   late final PanGestureRecognizer _drag;
@@ -425,6 +440,13 @@ class _RenderPannableWrap extends RenderWrap {
     }
   }
 
+  void _onCompleted(Offset position) {
+    double? value = _hitTestRatingValue(position);
+    if (value != null) {
+      onCompleted?.call(value);
+    }
+  }
+
   void _onHover(Offset position) {
     double? value = _hitTestRatingValue(position);
     if (value != null) {
@@ -455,6 +477,9 @@ class _RenderPannableWrap extends RenderWrap {
     }
     if (event is PointerHoverEvent && onHover != null) {
       _onHover(event.localPosition);
+    }
+    if (event is PointerUpEvent && onCompleted != null) {
+      _onCompleted(event.localPosition);
     }
   }
 
