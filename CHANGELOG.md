@@ -1,5 +1,11 @@
 # Release Notes
 
+## 2.5.1
+
+* Update: Remove unused variable `visibleForTracking`.
+* Update: Mark `calcPercent` function `protected`.
+* Documentation: Added more examples and formatted the `example` file.
+
 ## 2.5.0+1
 
 * Documentation: Change package description to fit with pub.dev standard.

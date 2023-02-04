@@ -33,53 +33,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double rating1 = 0;
-  double rating2 = 0;
-  double rating3 = 0;
-  double rating4 = 0;
-  double rating5 = 0;
-  double rating5Set = 0;
-
-  void updateRating1(double value) {
-    setState(() {
-      rating1 = value;
-    });
-  }
-
-  void updateRating2(double value) {
-    setState(() {
-      rating2 = value;
-    });
-  }
-
-  void updateRating3(double value) {
-    setState(() {
-      rating3 = value;
-    });
-  }
-
-  void updateRating4(double value) {
-    setState(() {
-      rating4 = value;
-    });
-  }
-
-  void updateRating5(double value) {
-    setState(() {
-      rating5 = value;
-    });
-  }
-
-  void setRating5(double value) {
-    setState(() {
-      rating5Set = value;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 5,
+      length: 6,
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
@@ -88,6 +45,9 @@ class _MyHomePageState extends State<MyHomePage> {
             tabs: [
               Tab(
                 text: "Basics",
+              ),
+              Tab(
+                text: "Variety",
               ),
               Tab(
                 text: "Customized",
@@ -104,210 +64,397 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        body: TabBarView(
-          physics: const NeverScrollableScrollPhysics(),
+        body: const TabBarView(
+          physics: NeverScrollableScrollPhysics(),
           children: [
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    '$rating1',
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  PannableRatingBar(
-                    rate: rating1,
-                    onChanged: updateRating1,
-                    spacing: 20,
-                    items: List.generate(
-                      5,
-                      (index) => const RatingWidget(
-                        selectedColor: Colors.yellow,
-                        unSelectedColor: Colors.grey,
-                        child: Icon(
-                          Icons.star,
-                          size: 48,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            BasicExample(),
+            VarietyExample(),
+            CustomizedExample(),
+            MultipleExample(),
+            AnimatedExample(),
+            HoverExample(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BasicExample extends StatefulWidget {
+  const BasicExample({Key? key}) : super(key: key);
+
+  @override
+  State<BasicExample> createState() => _BasicExampleState();
+}
+
+class _BasicExampleState extends State<BasicExample> {
+  double rating = 0;
+
+  void updateRating(double value) {
+    setState(() {
+      rating = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            '$rating',
+            style: Theme.of(context).textTheme.headline4,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          PannableRatingBar(
+            rate: rating,
+            onChanged: updateRating,
+            spacing: 20,
+            items: List.generate(
+              5,
+              (index) => const RatingWidget(
+                selectedColor: Colors.yellow,
+                unSelectedColor: Colors.grey,
+                child: Icon(
+                  Icons.star,
+                  size: 48,
+                ),
               ),
             ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    '$rating2',
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  PannableRatingBar(
-                    rate: rating2,
-                    spacing: 20,
-                    onChanged: updateRating2,
-                    items: const [
-                      RatingWidget(
-                        selectedColor: Colors.yellow,
-                        unSelectedColor: Colors.grey,
-                        child: Icon(
-                          Icons.star,
-                          size: 48,
-                        ),
-                      ),
-                      RatingWidget(
-                        selectedColor: Colors.blue,
-                        unSelectedColor: Colors.red,
-                        child: Icon(
-                          Icons.ac_unit,
-                          size: 48,
-                        ),
-                      ),
-                      RatingWidget(
-                        selectedColor: Colors.purple,
-                        unSelectedColor: Colors.amber,
-                        child: Icon(
-                          Icons.access_time_filled,
-                          size: 48,
-                        ),
-                      ),
-                      RatingWidget(
-                        selectedColor: Colors.cyanAccent,
-                        unSelectedColor: Colors.grey,
-                        child: Icon(
-                          Icons.abc,
-                          size: 48,
-                        ),
-                      ),
-                      RatingWidget(
-                        selectedColor: Colors.tealAccent,
-                        unSelectedColor: Colors.purple,
-                        child: Icon(
-                          Icons.accessibility_new_sharp,
-                          size: 48,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class VarietyExample extends StatefulWidget {
+  const VarietyExample({Key? key}) : super(key: key);
+
+  @override
+  State<VarietyExample> createState() => _VarietyExampleState();
+}
+
+class _VarietyExampleState extends State<VarietyExample> {
+  double rating = 0;
+
+  void updateRating(double value) {
+    setState(() {
+      rating = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              '$rating',
+              style: Theme.of(context).textTheme.headline4,
             ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        '$rating3',
-                        style: Theme.of(context).textTheme.headline4,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: PannableRatingBar.builder(
-                      rate: rating3,
-                      alignment: WrapAlignment.center,
-                      spacing: 20,
-                      runSpacing: 10,
-                      itemCount: 20,
-                      direction: Axis.vertical,
-                      onChanged: updateRating3,
-                      itemBuilder: (context, index) {
-                        return const RatingWidget(
-                          selectedColor: Colors.yellow,
-                          unSelectedColor: Colors.grey,
-                          child: Icon(
-                            Icons.star,
-                            size: 48,
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                ],
-              ),
+            const SizedBox(
+              height: 10,
             ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '$rating4',
-                    style: Theme.of(context).textTheme.headline4,
+            PannableRatingBar(
+              rate: rating,
+              onChanged: updateRating,
+              spacing: 20,
+              items: const [
+                RatingWidget(
+                  selectedColor: Colors.blue,
+                  child: Text(
+                    "Pannable",
+                    style: TextStyle(color: Colors.grey, fontSize: 40),
                   ),
-                  const SizedBox(
-                    height: 10,
+                ),
+                RatingWidget(
+                  selectedColor: Colors.red,
+                  child: Text(
+                    "Rating",
+                    style: TextStyle(color: Colors.grey, fontSize: 30),
                   ),
-                  PannableRatingBar(
-                    rate: rating4,
-                    spacing: 20,
-                    onChanged: updateRating4,
-                    items: [
-                      RatingWidget(
-                        selectedColor:
-                            rating4 <= 0.5 ? Colors.red : Colors.green,
-                        unSelectedColor: Colors.grey,
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 300),
-                          child: rating4 <= 0.5
-                              ? const Icon(
-                                  Icons.sentiment_very_dissatisfied,
-                                  key: ValueKey("sad"),
-                                  size: 100,
-                                )
-                              : const Icon(
-                                  Icons.sentiment_satisfied,
-                                  key: ValueKey("happy"),
-                                  size: 100,
-                                ),
-                        ),
-                      ),
-                    ],
+                ),
+                RatingWidget(
+                  selectedColor: Colors.amber,
+                  child: Text(
+                    "Bar",
+                    style: TextStyle(color: Colors.grey, fontSize: 50),
                   ),
-                ],
-              ),
-            ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    '$rating5Set',
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  PannableRatingBar(
-                    rate: rating5,
-                    onChanged: setRating5,
-                    onHover: updateRating5,
-                    spacing: 20,
-                    items: List.generate(
-                      5,
-                      (index) => const RatingWidget(
-                        selectedColor: Colors.yellow,
-                        unSelectedColor: Colors.grey,
-                        child: Icon(
-                          Icons.star,
-                          size: 48,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class CustomizedExample extends StatefulWidget {
+  const CustomizedExample({Key? key}) : super(key: key);
+
+  @override
+  State<CustomizedExample> createState() => _CustomizedExampleState();
+}
+
+class _CustomizedExampleState extends State<CustomizedExample> {
+  double rating = 0;
+
+  void updateRating(double value) {
+    setState(() {
+      rating = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            '$rating',
+            style: Theme.of(context).textTheme.headline4,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          PannableRatingBar(
+            rate: rating,
+            spacing: 20,
+            onChanged: updateRating,
+            items: const [
+              RatingWidget(
+                selectedColor: Colors.yellow,
+                unSelectedColor: Colors.grey,
+                child: Icon(
+                  Icons.star,
+                  size: 48,
+                ),
+              ),
+              RatingWidget(
+                selectedColor: Colors.blue,
+                unSelectedColor: Colors.red,
+                child: Icon(
+                  Icons.ac_unit,
+                  size: 48,
+                ),
+              ),
+              RatingWidget(
+                selectedColor: Colors.purple,
+                unSelectedColor: Colors.amber,
+                child: Icon(
+                  Icons.access_time_filled,
+                  size: 48,
+                ),
+              ),
+              RatingWidget(
+                selectedColor: Colors.cyanAccent,
+                unSelectedColor: Colors.grey,
+                child: Icon(
+                  Icons.abc,
+                  size: 48,
+                ),
+              ),
+              RatingWidget(
+                selectedColor: Colors.tealAccent,
+                unSelectedColor: Colors.purple,
+                child: Icon(
+                  Icons.accessibility_new_sharp,
+                  size: 48,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MultipleExample extends StatefulWidget {
+  const MultipleExample({Key? key}) : super(key: key);
+
+  @override
+  State<MultipleExample> createState() => _MultipleExampleState();
+}
+
+class _MultipleExampleState extends State<MultipleExample> {
+  double rating = 0;
+
+  void updateRating(double value) {
+    setState(() {
+      rating = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Expanded(
+            child: Center(
+              child: Text(
+                '$rating',
+                style: Theme.of(context).textTheme.headline4,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+          Expanded(
+            child: PannableRatingBar.builder(
+              rate: rating,
+              alignment: WrapAlignment.center,
+              spacing: 20,
+              runSpacing: 10,
+              itemCount: 20,
+              direction: Axis.vertical,
+              textDirection: TextDirection.rtl,
+              verticalDirection: VerticalDirection.up,
+              onChanged: updateRating,
+              itemBuilder: (context, index) {
+                return const RatingWidget(
+                  selectedColor: Colors.yellow,
+                  unSelectedColor: Colors.grey,
+                  child: Icon(
+                    Icons.star,
+                    size: 48,
+                  ),
+                );
+              },
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class AnimatedExample extends StatefulWidget {
+  const AnimatedExample({Key? key}) : super(key: key);
+
+  @override
+  State<AnimatedExample> createState() => _AnimatedExampleState();
+}
+
+class _AnimatedExampleState extends State<AnimatedExample> {
+  double rating = 0;
+
+  void updateRating(double value) {
+    setState(() {
+      rating = double.parse(value.toStringAsFixed(1));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          PannableRatingBar(
+            rate: rating,
+            spacing: 20,
+            onChanged: updateRating,
+            items: [
+              RatingWidget(
+                selectedColor: rating <= 0.5 ? Colors.red : Colors.green,
+                unSelectedColor: Colors.grey,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: rating <= 0.5
+                      ? const Icon(
+                          Icons.sentiment_very_dissatisfied,
+                          key: ValueKey("sad"),
+                          size: 100,
+                        )
+                      : const Icon(
+                          Icons.sentiment_satisfied,
+                          key: ValueKey("happy"),
+                          size: 100,
+                        ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Slider(
+            value: rating,
+            onChanged: updateRating,
+            min: 0,
+            max: 1,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class HoverExample extends StatefulWidget {
+  const HoverExample({Key? key}) : super(key: key);
+
+  @override
+  State<HoverExample> createState() => _HoverExampleState();
+}
+
+class _HoverExampleState extends State<HoverExample> {
+  double rating = 0;
+  double ratingSet = 0;
+
+  void updateRating(double value) {
+    setState(() {
+      rating = value;
+    });
+  }
+
+  void setRating(double value) {
+    setState(() {
+      ratingSet = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            '$ratingSet',
+            style: Theme.of(context).textTheme.headline4,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          PannableRatingBar(
+            rate: rating,
+            onChanged: setRating,
+            onHover: updateRating,
+            spacing: 20,
+            items: List.generate(
+              5,
+              (index) => const RatingWidget(
+                selectedColor: Colors.yellow,
+                unSelectedColor: Colors.grey,
+                child: Icon(
+                  Icons.star,
+                  size: 48,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

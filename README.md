@@ -141,6 +141,45 @@ PannableRatingBar(
 )
 ```
 
+<img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/variety.gif?raw=true" width="200px">
+
+```dart
+double rating = 0;
+PannableRatingBar(
+  rate: rating,
+  onChanged: (value){
+    setState((){
+      rating = value;
+    });
+  },
+  spacing: 20,
+  items: const [
+    RatingWidget(
+      selectedColor: Colors.blue,
+      child: Text(
+        "Pannable",
+        style: TextStyle(color: Colors.grey, fontSize: 40),
+      ),
+    ),
+    RatingWidget(
+      selectedColor: Colors.red,
+      child: Text(
+        "Rating",
+        style: TextStyle(color: Colors.grey, fontSize: 30),
+      ),
+    ),
+    RatingWidget(
+      selectedColor: Colors.amber,
+      child: Text(
+        "Bar",
+        style: TextStyle(color: Colors.grey, fontSize: 50),
+      ),
+    ),
+  ],
+),
+```
+
+
 This widget utilizes the layout capabilities of Flutter's built-in `Wrap` widget, allowing for a wide 
 range of possible layouts to be achieved. The properties of the `Wrap` widget, such as `textDirection` 
 and `verticalDirection`, are also considered when painting the indicators, giving you even greater 
@@ -216,5 +255,6 @@ PannableRatingBar(
 
 ## Additional information
 
+For more, checkout and play with the example file.
 If you have any suggestions for improvement, simply create an issue in the repository!
 
