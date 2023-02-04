@@ -195,7 +195,8 @@ class PannableRatingBar extends StatelessWidget {
   int get itemCount => _itemCount;
 
   /// Calculates the distribution of the [rate] value among each of the
-  /// [RatingWidget]s.
+  /// [RatingWidget]s
+  @protected
   double calcPercent(int index, double rate) {
     if (index < rate.floor()) {
       return 1;
@@ -386,8 +387,6 @@ class _RenderPannableWrap extends RenderWrap {
   double? minRating;
   double? maxRating;
   GestureType gestureType;
-
-  late bool validForMouseTracker;
 
   double? _hitTestRatingValue(Offset position) {
     _RenderRateItem? child = firstChild as _RenderRateItem?;
