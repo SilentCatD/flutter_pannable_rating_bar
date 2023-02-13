@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.5.1+1
+
+* Optimization: reduce library size by ignore `assets` folder.
+
 ## 2.5.1
 
 * Update: Remove unused variable `visibleForTracking`.
