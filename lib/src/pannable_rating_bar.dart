@@ -456,6 +456,7 @@ class _RenderPannableWrap extends RenderWrap {
   @override
   void handleEvent(
       PointerEvent event, covariant HitTestEntry<HitTestTarget> entry) {
+    assert(debugHandleEvent(event, entry));
     if (event is PointerDownEvent && onChanged != null) {
       bool useTap = true;
       bool useDrag = true;

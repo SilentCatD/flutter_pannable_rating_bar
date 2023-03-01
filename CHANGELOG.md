@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.5.2
+
+* Update: Add `assert(debugHandleEvent(...))` in the `handleEvent` function according to docs
+
 ## 2.5.1+2
 
 * Files: remove `assets` file in publishing.
