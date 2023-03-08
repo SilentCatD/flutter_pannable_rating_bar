@@ -253,6 +253,30 @@ PannableRatingBar(
 ),
 ```
 
+For ease of transforming / mutating rating values, the library support using functions to do as such,
+used as a parameter in `PannableRatingBar`.
+
+Return null from this will cause the current rating value skipped in all callbacks.
+```dart
+typedef RatingValueTransformer = double? Function(double value);
+```
+Some of the pre-built `RatingValueTransformer`s available are:
+
+```dart
+// Rounding to nearest single digit. This is also the default one that `PannableRatingBar` used.
+double singleDigitRatingValueTransformer(double value);
+```
+
+```dart
+// Rounding to nearest .5.
+double halfRatingValueTransformer(double value);
+```
+
+```dart
+// Leave the rating as is.
+double rawRatingValueTransformer(double value);
+```
+
 ## Additional information
 
 For more, checkout and play with the example file.

@@ -2,6 +2,40 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+/// Signature for function that will perform mutate / transform operations on
+/// the output rating value.
+/// Return null here will cause callbacks to be skipped.
+typedef RatingValueTransformer = double? Function(double value);
+
+/// [RatingValueTransformer] that will round the rating value to the nearest
+/// single fractional digit.
+double singleDigitRatingValueTransformer(double value) {
+  return double.parse(value.toStringAsFixed(1));
+}
+
+/// [RatingValueTransformer] that will round the rating value to nearest
+/// .5.
+double halfRatingValueTransformer(double value) {
+  final truncated = value.truncate();
+  if (truncated == value) return value;
+  var fractional = value - truncated;
+  if (fractional <= 0.25) {
+    fractional = 0;
+  } else if (fractional > 0.25 && fractional <= 0.5) {
+    fractional = 0.5;
+  } else if (fractional > 0.5 && fractional <= 0.75) {
+    fractional = 0.75;
+  } else {
+    fractional = 1;
+  }
+  return truncated + fractional;
+}
+
+/// [RatingValueTransformer] that will leave the rating value as is.
+double rawRatingValueTransformer(double value) {
+  return value;
+}
+
 /// The [GestureType] enumeration provides a way to specify the type of gesture
 /// used to interact with the [PannableRatingBar.onChanged] callback.
 /// When set to [GestureType.tapOnly], only tap events are accepted.
@@ -41,7 +75,7 @@ class RatingWidget {
 /// [PannableRatingBar.builder]
 typedef IndexedRatingWidgetBuilder = RatingWidget Function(BuildContext, int);
 
-/// A stateless rating bar widget that supports tap, pan (drag) and hover
+/// A [StatelessWidget] rating bar that supports tap, pan (drag) and hover
 /// events, with no limits on the value of [PannableRatingBar.rate]. The value
 /// is distributed to each [RatingWidget.child] respectively.
 
@@ -82,6 +116,7 @@ class PannableRatingBar extends StatelessWidget {
     this.maxRating,
     this.gestureType = GestureType.tapAndDrag,
     this.onCompleted,
+    this.valueTransformer = singleDigitRatingValueTransformer,
   })  : _useItemBuilder = false,
         _items = items,
         _itemCount = items.length,
@@ -117,6 +152,7 @@ class PannableRatingBar extends StatelessWidget {
     this.maxRating,
     this.gestureType = GestureType.tapAndDrag,
     this.onCompleted,
+    this.valueTransformer = singleDigitRatingValueTransformer,
   })  : _useItemBuilder = true,
         _items = null,
         _itemCount = itemCount,
@@ -164,6 +200,14 @@ class PannableRatingBar extends StatelessWidget {
   /// Specifies the gesture [PannableRatingBar.onChanged] will respond to.
   /// Default to [GestureType.tapAndDrag].
   final GestureType gestureType;
+
+  /// Transformer that will mutate the original rating value. Return null will
+  /// prevent the rating value from being fired in callbacks.
+  /// Default to [singleDigitRatingValueTransformer], which will round to the
+  /// nearest single digit.
+  /// For rounding to the nearest .5, consider [halfRatingValueTransformer], or
+  /// [rawRatingValueTransformer] to leave the value as is.
+  final RatingValueTransformer valueTransformer;
 
   /// Refer to [Wrap.direction]
   final Axis direction;
@@ -260,6 +304,7 @@ class PannableRatingBar extends StatelessWidget {
       minRating: minRating,
       gestureType: gestureType,
       onCompleted: onCompleted,
+      valueTransformer: valueTransformer,
       children: children,
     );
   }
@@ -283,6 +328,7 @@ class _PannableWrap extends Wrap {
     this.minRating,
     this.onHover,
     this.onCompleted,
+    required this.valueTransformer,
   }) : super(
           direction: direction,
           alignment: alignment,
@@ -301,6 +347,7 @@ class _PannableWrap extends Wrap {
   final GestureType gestureType;
   final ValueChanged<double>? onHover;
   final ValueChanged<double>? onCompleted;
+  final RatingValueTransformer valueTransformer;
 
   @override
   RenderWrap createRenderObject(BuildContext context) {
@@ -320,6 +367,7 @@ class _PannableWrap extends Wrap {
       gestureType: gestureType,
       onHover: onHover,
       onCompleted: onCompleted,
+      valueTransformer: valueTransformer,
     );
   }
 
@@ -341,7 +389,8 @@ class _PannableWrap extends Wrap {
       ..minRating = minRating
       ..gestureType = gestureType
       ..onHover = onHover
-      ..onCompleted = onCompleted;
+      ..onCompleted = onCompleted
+      ..valueTransformer = valueTransformer;
   }
 }
 
@@ -357,6 +406,7 @@ class _RenderPannableWrap extends RenderWrap {
     TextDirection? textDirection,
     VerticalDirection verticalDirection = VerticalDirection.down,
     Clip clipBehavior = Clip.none,
+    required this.valueTransformer,
     required this.gestureType,
     this.maxRating,
     this.minRating,
@@ -395,6 +445,7 @@ class _RenderPannableWrap extends RenderWrap {
   ValueChanged<double>? onChanged;
   ValueChanged<double>? onHover;
   ValueChanged<double>? onCompleted;
+  RatingValueTransformer valueTransformer;
 
   late final TapGestureRecognizer _tap;
   late final PanGestureRecognizer _drag;
@@ -422,10 +473,11 @@ class _RenderPannableWrap extends RenderWrap {
         },
       );
       if (isHit && percent != null) {
-        final rounded = double.parse((percent!).toStringAsFixed(1));
-        if (minRating != null && rounded < minRating!) return null;
-        if (maxRating != null && rounded > maxRating!) return null;
-        return rounded;
+        final transformed = valueTransformer.call(percent!);
+        if (transformed == null) return null;
+        if (minRating != null && transformed < minRating!) return null;
+        if (maxRating != null && transformed > maxRating!) return null;
+        return transformed;
       }
       child = childParentData.nextSibling as _RenderRateItem?;
     }

@@ -1,5 +1,9 @@
 # Release Notes
 
+### 2.6.0
+
+* New feature: `RatingValueTransformer` added, allow transforming rating values.
+
 ## 2.5.2+1
 
 * Files: remove `assets` file in publishing.
