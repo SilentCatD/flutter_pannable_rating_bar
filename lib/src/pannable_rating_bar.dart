@@ -21,10 +21,8 @@ double halfRatingValueTransformer(double value) {
   var fractional = value - truncated;
   if (fractional <= 0.25) {
     fractional = 0;
-  } else if (fractional > 0.25 && fractional <= 0.5) {
+  } else if (fractional > 0.25 && fractional <= 0.75) {
     fractional = 0.5;
-  } else if (fractional > 0.5 && fractional <= 0.75) {
-    fractional = 0.75;
   } else {
     fractional = 1;
   }
