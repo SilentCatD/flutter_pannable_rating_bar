@@ -1,5 +1,9 @@
 # Release Notes
 
+### 2.7.0
+
+* New feature: `GestureType.DragOnly` added, allow further gesture filtering.
+
 ### 2.6.0
 
 * New feature: `RatingValueTransformer` added, allow transforming rating values.

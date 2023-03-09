@@ -11,7 +11,7 @@ user experience.
 * Offers fractional values for rating
 * High degree of customization for the rating widgets, which can be of different sizes, shapes, and colors.
 * Precise hit testing, as the child widget's render object is utilized to determine the results.
-* Allows for filtering gestures with either `tapOnly` or `tapAndDrag` options.
+* Allows for filtering gestures with either `tapOnly`, `dragOnly` or `tapAndDrag` options.
 * Rating reports on cursor hovering supported.
 * Built on Flutter's `Wrap` widget, offering a variety of supported layouts, including consideration 
 of `Wrap` properties such as `textDirection` and `verticalDirection` when painting the indicators.

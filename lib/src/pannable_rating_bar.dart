@@ -37,10 +37,12 @@ double rawRatingValueTransformer(double value) {
 /// The [GestureType] enumeration provides a way to specify the type of gesture
 /// used to interact with the [PannableRatingBar.onChanged] callback.
 /// When set to [GestureType.tapOnly], only tap events are accepted.
+/// Similarly, when set to [GestureType.dragOnly]. only drag events are accepted.
 /// On the other hand, when set to [GestureType.tapAndDrag], both tap and drag
 /// events are supported.
 enum GestureType {
   tapOnly,
+  dragOnly,
   tapAndDrag,
 }
 
@@ -433,6 +435,7 @@ class _RenderPannableWrap extends RenderWrap {
     _drag = PanGestureRecognizer(debugOwner: this)
       ..team = team
       ..onStart = (details) {
+        if (gestureType == GestureType.dragOnly) return;
         _onChange(details.localPosition);
       }
       ..onUpdate = (details) {
@@ -513,6 +516,9 @@ class _RenderPannableWrap extends RenderWrap {
       switch (gestureType) {
         case GestureType.tapOnly:
           useDrag = false;
+          break;
+        case GestureType.dragOnly:
+          useTap = false;
           break;
         case GestureType.tapAndDrag:
         default:
