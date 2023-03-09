@@ -263,18 +263,19 @@ typedef RatingValueTransformer = double? Function(double value);
 Some of the pre-built `RatingValueTransformer`s available are:
 
 ```dart
-// Rounding to nearest single digit. This is also the default one that `PannableRatingBar` used.
-double singleDigitRatingValueTransformer(double value);
+// Rounding to nearest single fractional digit. This is also the default one that 
+// `PannableRatingBar` used.
+double singleFractionalValueTransformer(double value);
 ```
 
 ```dart
 // Rounding to nearest .5.
-double halfRatingValueTransformer(double value);
+double halfFractionalValueTransformer(double value);
 ```
 
 ```dart
 // Leave the rating as is.
-double rawRatingValueTransformer(double value);
+double rawValueTransformer(double value);
 ```
 
 ## Additional information

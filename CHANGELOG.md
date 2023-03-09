@@ -1,5 +1,9 @@
 # Release Notes
 
+### 2.7.2
+
+* Update: change pre-built `RatingValueTransformer` function names.
+
 ### 2.7.1
 
 * Update: changing impl of internal `ShaderMask` drawing to single color.

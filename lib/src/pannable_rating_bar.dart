@@ -9,13 +9,13 @@ typedef RatingValueTransformer = double? Function(double value);
 
 /// [RatingValueTransformer] that will round the rating value to the nearest
 /// single fractional digit.
-double singleDigitRatingValueTransformer(double value) {
+double singleFractionalValueTransformer(double value) {
   return double.parse(value.toStringAsFixed(1));
 }
 
 /// [RatingValueTransformer] that will round the rating value to nearest
 /// .5.
-double halfRatingValueTransformer(double value) {
+double halfFractionalValueTransformer(double value) {
   final truncated = value.truncate();
   if (truncated == value) return value;
   var fractional = value - truncated;
@@ -30,7 +30,7 @@ double halfRatingValueTransformer(double value) {
 }
 
 /// [RatingValueTransformer] that will leave the rating value as is.
-double rawRatingValueTransformer(double value) {
+double rawValueTransformer(double value) {
   return value;
 }
 
@@ -116,7 +116,7 @@ class PannableRatingBar extends StatelessWidget {
     this.maxRating,
     this.gestureType = GestureType.tapAndDrag,
     this.onCompleted,
-    this.valueTransformer = singleDigitRatingValueTransformer,
+    this.valueTransformer = singleFractionalValueTransformer,
   })  : _useItemBuilder = false,
         _items = items,
         _itemCount = items.length,
@@ -152,7 +152,7 @@ class PannableRatingBar extends StatelessWidget {
     this.maxRating,
     this.gestureType = GestureType.tapAndDrag,
     this.onCompleted,
-    this.valueTransformer = singleDigitRatingValueTransformer,
+    this.valueTransformer = singleFractionalValueTransformer,
   })  : _useItemBuilder = true,
         _items = null,
         _itemCount = itemCount,
@@ -203,10 +203,10 @@ class PannableRatingBar extends StatelessWidget {
 
   /// Transformer that will mutate the original rating value. Return null will
   /// prevent the rating value from being fired in callbacks.
-  /// Default to [singleDigitRatingValueTransformer], which will round to the
+  /// Default to [singleFractionalValueTransformer], which will round to the
   /// nearest single digit.
-  /// For rounding to the nearest .5, consider [halfRatingValueTransformer], or
-  /// [rawRatingValueTransformer] to leave the value as is.
+  /// For rounding to the nearest .5, consider [halfFractionalValueTransformer], or
+  /// [rawValueTransformer] to leave the value as is.
   final RatingValueTransformer valueTransformer;
 
   /// Refer to [Wrap.direction]
