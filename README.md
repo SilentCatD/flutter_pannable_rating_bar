@@ -31,7 +31,7 @@ customize the display of the `PannableRatingBar`. Simply rebuild the widget with
 in the `onChanged` callback or `onHover` callback and the widget will automatically adjust the 
 rating distribution across each rating widget.
 
-<img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/basics.gif?raw=true" width="200px">
+<img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/.assets/basics.gif?raw=true" width="200px">
 
 ```dart
 double rating = 0.0;
@@ -84,7 +84,7 @@ PannableRatingBar(
 Utilize your own custom widgets as the rating indicators. With complete customization freedom, they 
 don't have to be uniform in size, color, or any other aspect.
 
-<img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/crazy.gif?raw=true" width="200px">
+<img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/.assets/crazy.gif?raw=true" width="200px">
 
 ```dart
 double rating = 0.0;
@@ -141,7 +141,7 @@ PannableRatingBar(
 )
 ```
 
-<img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/variety.gif?raw=true" width="200px">
+<img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/.assets/variety.gif?raw=true" width="200px">
 
 ```dart
 double rating = 0;
@@ -185,7 +185,7 @@ range of possible layouts to be achieved. The properties of the `Wrap` widget, s
 and `verticalDirection`, are also considered when painting the indicators, giving you even greater 
 control over the final look and feel of the rating bar.
 
-<img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/builder.gif?raw=true" width="200px">
+<img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/.assets/builder.gif?raw=true" width="200px">
 
 ```dart
 double rating = 0.0;
@@ -217,7 +217,7 @@ PannableRatingBar.builder(
 
 Customize the appearance of the rating indicators based on their values.
 
-<img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/assets/animation.gif?raw=true" width="200px">
+<img src="https://github.com/SilentCatD/flutter_pannable_rating_bar/blob/main/.assets/animation.gif?raw=true" width="200px">
 
 ```dart
 double rating = 0;
