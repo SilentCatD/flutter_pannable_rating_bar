@@ -1,5 +1,9 @@
 # Release Notes
 
+### 2.7.1
+
+* Update: changing impl of internal `ShaderMask` drawing to single color.
+
 ### 2.7.0
 
 * New feature: `GestureType.DragOnly` added, allow further gesture filtering.

@@ -742,8 +742,7 @@ class _RenderRateItem extends RenderProxyBox {
 
     _foregroundHandle.layer ??= ShaderMaskLayer();
     _foregroundHandle.layer!
-      ..shader = LinearGradient(
-              tileMode: TileMode.decal, colors: [selectedColor, selectedColor])
+      ..shader = LinearGradient(colors: [selectedColor], stops: const [0])
           .createShader(Offset.zero & maskSize)
       ..maskRect = maskRect
       ..blendMode = BlendMode.srcIn;
