@@ -1,5 +1,9 @@
 # Release Notes
 
+### 2.7.2+1
+
+* Files: update `.pubignore` and assets link.
+
 ### 2.7.2
 
 * Update: change pre-built `RatingValueTransformer` function names.
